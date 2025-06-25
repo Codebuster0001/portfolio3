@@ -1,20 +1,19 @@
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config({ path: "./.env" });
+
+import express from "express";
+
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import { dbConnection } from "./database/dbConnection.js";
-import errorMiddleware from './middlewares/error.js'; // ✅ default import
+import { errorMiddleware } from "./middlewares/error.js";// ✅ default import
 
 import messageRouter from "./router/messageRoutes.js";
 import userRouter from "./router/UserRoutes.js";
 
-// Load environment variables
-dotenv.config({ path: "./.env" });
 
 const app = express();
-
-
 
 // CORS config
 app.use(
@@ -28,7 +27,7 @@ app.use(
 // Cookie parser
 app.use(cookieParser());
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 
 // File uploads
 
