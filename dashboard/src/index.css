@@ -66,3 +66,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Hide scrollbar for modern browsers */
+/* index.css */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE & Edge */
+
+  scrollbar-width: none; /* Firefox */
+}
+
+/* index.css */
+body, html {
+  overflow: hidden;
+}
+

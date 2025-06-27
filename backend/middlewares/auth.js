@@ -25,9 +25,3 @@ export const isAuthenticated = catchAsyncErrors(async (req, res, next) => {
   next();
 });
 
-export const isAdmin = catchAsyncErrors((req, res, next) => {
-  if (!req.user || !req.user.isAdmin) {
-    return next(new ErrorHandler("Admin access only!", 403));
-  }
-  next();
-});

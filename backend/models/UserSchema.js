@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import crypto from "crypto"; 
-// models/UserSchema.js
+import crypto from "crypto";
+
 const userSchema = new mongoose.Schema({
   fullName: String,
   email: {
@@ -20,20 +20,18 @@ const userSchema = new mongoose.Schema({
     public_id: String,
     url: String,
   },
+  description: String,
+  technologies: [String],
   portfolioURL: String,
   githubURL: String,
   instagramURL: String,
   linkedInURL: String,
 
-  isAdmin: {
-    type: Boolean,
-    default: false,
-  },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
 });
 
-
+// Hash password before saving
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
@@ -51,18 +49,12 @@ userSchema.methods.generateJsonWebToken = function () {
 };
 
 userSchema.methods.getResetPasswordToken = function () {
-  //Generating Token
   const resetToken = crypto.randomBytes(20).toString("hex");
-
-  //Hashing and Adding Reset Password Token To UserSchema
   this.resetPasswordToken = crypto
     .createHash("sha256")
     .update(resetToken)
     .digest("hex");
-
-  //Setting Reset Password Token Expiry Time
   this.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
-
   return resetToken;
 };
 

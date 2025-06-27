@@ -29,13 +29,9 @@ const ProjectDetails = () => {
     );
   }
 
-  const media = [
-    ...(project.images || []).map((img) => img.url),
-    ...(project.videoUrl ? [project.videoUrl] : []),
-  ];
-
+  // Only images are used
+  const media = (project.images || []).map((img) => img.url);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const isVideo = (url) => typeof url === "string" && url.endsWith(".mp4");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -101,21 +97,11 @@ const ProjectDetails = () => {
               transition={{ duration: 0.5 }}
               className="w-full h-full"
             >
-              {isVideo(media[currentIndex]) ? (
-                <video
-                  src={media[currentIndex]}
-                  controls
-                  loop
-                  muted
-                  className="w-full h-full object-contain"
-                />
-              ) : (
-                <img
-                  src={media[currentIndex]}
-                  alt={`Screenshot ${currentIndex + 1}`}
-                  className="w-full h-full object-contain"
-                />
-              )}
+              <img
+                src={media[currentIndex]}
+                alt={`Screenshot ${currentIndex + 1}`}
+                className="w-full h-full object-contain"
+              />
             </motion.div>
 
             <div className="absolute bottom-4 right-4 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-sm z-10">
@@ -138,24 +124,11 @@ const ProjectDetails = () => {
               }`}
               onClick={() => setCurrentIndex(index)}
             >
-              {isVideo(item) ? (
-                <video
-                  src={item}
-                  className="w-full h-full object-cover"
-                  preload="metadata"
-                />
-              ) : (
-                <img
-                  src={item}
-                  alt={`Thumb ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              )}
-              {isVideo(item) && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-xl">
-                  ▶
-                </div>
-              )}
+              <img
+                src={item}
+                alt={`Thumb ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
             </div>
           ))}
         </div>
@@ -163,7 +136,6 @@ const ProjectDetails = () => {
 
       {/* Main Content */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-        {/* Description */}
         <div className="md:col-span-2 space-y-8">
           <BoxReveal boxColor="#10b981">
             <h3 className="text-2xl font-semibold mb-4">About the Project</h3>

@@ -7,9 +7,10 @@ dotenv.config(); // Ensure .env is loaded here too
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_COULD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_SERCET_KEY,
+  api_secret: process.env.CLOUDINARY_SECRCET_KEY,
 });
+const PORT = process.env.PORT || 8000;
 
-app.listen(process.env.PORT, () => {
+app.listen( PORT, () => {
   console.log(`Server listening at port ${process.env.PORT}`);
 });

@@ -7,11 +7,13 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import { dbConnection } from "./database/dbConnection.js";
-import { errorMiddleware } from "./middlewares/error.js";// ✅ default import
+import { errorMiddleware } from "./middlewares/error.js"; // ✅ default import
 
 import messageRouter from "./router/messageRoutes.js";
 import userRouter from "./router/UserRoutes.js";
-
+import timelineRouter from "./router/timelineRoutes.js";
+import skillRouter from "./router/skillsRoutes.js";
+import projectRouter from "./router/projectRoutes.js";
 
 const app = express();
 
@@ -40,6 +42,9 @@ app.use(
 
 app.use("/api/v1/message", messageRouter);
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/timeline", timelineRouter);
+app.use("/api/v1/skill", skillRouter);
+app.use("/api/v1/projects", projectRouter);
 
 dbConnection();
 
