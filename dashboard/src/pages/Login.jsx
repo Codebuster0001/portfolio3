@@ -1,4 +1,3 @@
-// src/pages/Login.jsx
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
@@ -8,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react"; // 👈 import icons
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -15,6 +15,7 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // 👈 toggle state
 
   const { loading, isAuthenticated, error } = useSelector(
     (state) => state.user
@@ -65,7 +66,7 @@ const Login = () => {
                 />
               </div>
 
-              <div className="grid gap-2">
+              <div className="grid gap-2 relative">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Password</Label>
                   <Link
@@ -77,11 +78,18 @@ const Login = () => {
                 </div>
                 <Input
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"} // 👈 toggle input type
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-[42px] text-gray-500"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
 
               <Button
@@ -92,8 +100,6 @@ const Login = () => {
                 {loading ? "Logging in..." : "Login"}
               </Button>
             </div>
-
-            
           </div>
         </div>
       </div>

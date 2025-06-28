@@ -56,3 +56,28 @@ export const deleteTimeline = catchAsyncErrors(async (req, res, next) => {
     message: "Timeline entry deleted successfully",
   });
 });
+
+
+// ✅ PUT: Update a timeline entry by ID (admin only)
+export const updateTimeline = catchAsyncErrors(async (req, res, next) => {
+  const { id } = req.params;
+  const { year, title, description } = req.body;
+
+  const timelineEntry = await Timeline.findById(id);
+  if (!timelineEntry) {
+    return next(new ErrorHandler("Timeline entry not found", 404));
+  }
+
+  timelineEntry.year = year || timelineEntry.year;
+  timelineEntry.title = title || timelineEntry.title;
+  timelineEntry.description = description || timelineEntry.description;
+
+  await timelineEntry.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Timeline entry updated successfully",
+    timeline: timelineEntry,
+  });
+});
+

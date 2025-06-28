@@ -110,10 +110,27 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
   ];
 
   fields.forEach((field) => {
-    if (req.body[field] !== undefined) user[field] = req.body[field];
+    if (req.body[field] !== undefined) {
+      // ✅ Clean technologies array
+      if (field === "technologies") {
+        let techValue = req.body.technologies;
+        if (typeof techValue === "string") {
+          try {
+            // Attempt JSON parse first (if sent like '["React","Node.js"]')
+            techValue = JSON.parse(techValue);
+          } catch {
+            // Otherwise fallback to comma-split
+            techValue = techValue.split(",").map((t) => t.trim());
+          }
+        }
+        user.technologies = Array.isArray(techValue) ? techValue : [];
+      } else {
+        user[field] = req.body[field];
+      }
+    }
   });
 
-  // Resume upload
+  // Resume Upload
   if (req.files?.resume) {
     if (user.resume?.public_id) {
       await cloudinary.uploader.destroy(user.resume.public_id);

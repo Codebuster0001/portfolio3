@@ -9,8 +9,8 @@ const Profile = () => {
   const { user } = useSelector((state) => state.user);
 
   return (
-    <div className="w-full h-full">
-      <div className="grid gap-6">
+    <div className="w-full h-full p-4">
+      <div className="grid gap-6 bg-muted p-6 rounded-xl shadow-md">
         {/* Resume Section */}
         <div className="grid md:grid-cols-2 gap-6 items-center">
           <div className="grid gap-2 w-full">
@@ -46,11 +46,19 @@ const Profile = () => {
             <Input type="text" defaultValue={user?.phone} disabled />
           </div>
           <div className="grid gap-2">
-            <Label>About Me</Label>
-            <Textarea defaultValue={user?.aboutMe} disabled rows={4} />
+            <Label>Description</Label>
+            <Textarea defaultValue={user?.description} disabled rows={4} />
+          </div>
+          <div className="grid gap-2">
+            <Label>Technologies</Label>
+            <Input
+              type="text"
+              defaultValue={user?.technologies?.join(", ")}
+              disabled
+            />
           </div>
 
-          {/* URLs Section (Grid in large view) */}
+          {/* URLs Section */}
           <div className="grid gap-4 md:grid-cols-2">
             <div className="grid gap-2">
               <Label>Portfolio URL</Label>

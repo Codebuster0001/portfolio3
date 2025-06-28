@@ -1,24 +1,34 @@
 // src/components/common/AdminSidebar.jsx
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, UserCog, BadgeCheck, FolderGit2 } from "lucide-react";
+import { LayoutDashboard, UserCog, BadgeCheck, FolderGit2, Hourglass, MessageSquare } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const links = [
   {
-    name: "Profile",
-    path: "about",
-    icon: <UserCog className="w-5 h-5" />,
-  },
-  {
     name: "Skills",
-    path: "skills",
+    path: "skill",
     icon: <BadgeCheck className="w-5 h-5" />,
   },
   {
+    name: "Timeline",
+    path: "timeline",
+    icon: <Hourglass className="w-5 h-5" />,
+  },
+  {
+    name: "Messages",
+    path: "messages",
+    icon: <MessageSquare className="w-5 h-5" />,
+  },
+  {
     name: "Projects",
-    path: "projects",
+    path: "project",
     icon: <FolderGit2 className="w-5 h-5" />,
+  },
+  {
+    name: "Profile",
+    path: "about",
+    icon: <UserCog className="w-5 h-5" />,
   },
 ];
 

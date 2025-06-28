@@ -1,38 +1,141 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  updatePassword,
+  resetProfile,
+  clearAllUserErrors,
+  clearMessage,
+  logout,
+} from "@/store/slices/userSlice";
+import { Eye, EyeOff } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const UpdatePassword = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { loading, error, isUpdated, message } = useSelector(
+    (state) => state.user
+  );
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!currentPassword || !newPassword || !confirmNewPassword) {
+      return toast.error("All fields are required.");
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      return toast.error("New password and confirm password do not match.");
+    }
+
+    dispatch(updatePassword(currentPassword, newPassword, confirmNewPassword));
+  };
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearAllUserErrors());
+    }
+  }, [error, dispatch]);
+
+  useEffect(() => {
+    if (isUpdated) {
+      toast.success("Password updated successfully!");
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+
+      dispatch(resetProfile());
+      dispatch(clearMessage());
+      dispatch(logout());
+      navigate("/login");
+    }
+  }, [isUpdated, dispatch, navigate]);
+
+  useEffect(() => {
+    if (message) {
+      toast.success(message);
+      dispatch(clearMessage());
+    }
+  }, [message, dispatch]);
+
   return (
-    <form className="grid gap-6 max-w-lg">
-      <div className="grid gap-2">
+    <form className="space-y-6" onSubmit={handleSubmit}>
+      {/* Current Password */}
+      <div className="grid gap-2 relative">
         <Label htmlFor="currentPassword">Current Password</Label>
         <Input
           id="currentPassword"
-          type="password"
+          type={showCurrent ? "text" : "password"}
           placeholder="Enter current password"
+          value={currentPassword}
+          onChange={(e) => setCurrentPassword(e.target.value)}
         />
+        <button
+          type="button"
+          className="absolute right-3 top-9 text-gray-500"
+          onClick={() => setShowCurrent((prev) => !prev)}
+        >
+          {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
       </div>
-      <div className="grid gap-2">
+
+      {/* New Password */}
+      <div className="grid gap-2 relative">
         <Label htmlFor="newPassword">New Password</Label>
         <Input
           id="newPassword"
-          type="password"
+          type={showNew ? "text" : "password"}
           placeholder="Enter new password"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
         />
+        <button
+          type="button"
+          className="absolute right-3 top-9 text-gray-500"
+          onClick={() => setShowNew((prev) => !prev)}
+        >
+          {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
       </div>
-      <div className="grid gap-2">
-        <Label htmlFor="confirmPassword">Confirm New Password</Label>
+
+      {/* Confirm New Password */}
+      <div className="grid gap-2 relative">
+        <Label htmlFor="confirmNewPassword">Confirm New Password</Label>
         <Input
-          id="confirmPassword"
-          type="password"
+          id="confirmNewPassword"
+          type={showConfirm ? "text" : "password"}
           placeholder="Confirm new password"
+          value={confirmNewPassword}
+          onChange={(e) => setConfirmNewPassword(e.target.value)}
         />
+        <button
+          type="button"
+          className="absolute right-3 top-9 text-gray-500"
+          onClick={() => setShowConfirm((prev) => !prev)}
+        >
+          {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit">Update Password</Button>
+        <Button type="submit" disabled={loading}>
+          {loading ? "Updating..." : "Update Password"}
+        </Button>
       </div>
     </form>
   );

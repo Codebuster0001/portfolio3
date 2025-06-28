@@ -27,11 +27,17 @@ const ResetPassword = () => {
   );
   const { isAuthenticated } = useSelector((state) => state.user);
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     if (!password || !confirmPassword) {
       toast.error("All fields are required");
       return;
     }
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
     dispatch(resetPassword(token, password, confirmPassword));
   };
 
@@ -55,7 +61,7 @@ const ResetPassword = () => {
   return (
     <div className="grid lg:grid-cols-2 min-h-screen">
       <div className="flex items-center justify-center px-4">
-        <div className="w-full max-w-md space-y-6">
+        <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6">
           <h1 className="text-3xl font-bold text-center">Reset Password</h1>
           <p className="text-muted-foreground text-center text-sm">
             Set your new password
@@ -70,6 +76,7 @@ const ResetPassword = () => {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  required
                 />
                 <span
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-muted-foreground"
@@ -88,6 +95,7 @@ const ResetPassword = () => {
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
                 />
                 <span
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-muted-foreground"
@@ -102,15 +110,11 @@ const ResetPassword = () => {
               </div>
             </div>
 
-            <Button
-              onClick={handleSubmit}
-              className="w-full"
-              disabled={loading}
-            >
+            <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Resetting..." : "Reset Password"}
             </Button>
           </div>
-        </div>
+        </form>
       </div>
 
       <div className="hidden lg:flex items-center justify-center bg-muted">

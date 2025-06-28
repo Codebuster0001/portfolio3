@@ -14,16 +14,15 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const { loading, error, message } = useSelector(
     (state) => state.forgotPassword
   );
   const { isAuthenticated } = useSelector((state) => state.user);
 
-  const handleSubmit = () => {
-    if (!email) {
-      toast.error("Please enter your email");
-      return;
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!email) return toast.error("Please enter your email");
     dispatch(forgotPassword(email));
   };
 
@@ -32,18 +31,20 @@ const ForgotPassword = () => {
       toast.error(error);
       dispatch(clearAllForgotResetPassErrors());
     }
+
     if (message) {
       toast.success(message);
     }
+
     if (isAuthenticated) {
       navigate("/");
     }
-  }, [error, message, isAuthenticated]);
+  }, [error, message, isAuthenticated, dispatch, navigate]);
 
   return (
     <div className="grid lg:grid-cols-2 min-h-screen">
       <div className="flex items-center justify-center px-4">
-        <div className="w-full max-w-md space-y-6">
+        <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6">
           <h1 className="text-3xl font-bold text-center">Forgot Password</h1>
           <p className="text-muted-foreground text-center text-sm">
             Enter your email address to receive a reset link
@@ -59,11 +60,7 @@ const ForgotPassword = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <Button
-              onClick={handleSubmit}
-              className="w-full"
-              disabled={loading}
-            >
+            <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Sending..." : "Send Reset Link"}
             </Button>
           </div>
@@ -73,7 +70,7 @@ const ForgotPassword = () => {
               Remember your password? Login
             </Link>
           </div>
-        </div>
+        </form>
       </div>
 
       <div className="hidden lg:flex items-center justify-center bg-muted">

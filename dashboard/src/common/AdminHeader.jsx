@@ -11,14 +11,30 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { logout } from "@/store/slices/userSlice";
 import { LayoutDashboard, Menu } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Link } from "react-router-dom"; 
 
 const links = [
-  { name: "Profile", path: "about" },
-  { name: "Skills", path: "skills" },
-  { name: "Projects", path: "projects" },
+  {
+    name: "Skills",
+    path: "skill",
+  },
+  {
+    name: "Timeline",
+    path: "timeline",
+  },
+  {
+    name: "Messages",
+    path: "messages",
+  },
+  {
+    name: "Projects",
+    path: "project",
+  },
+  {
+    name: "Profile",
+    path: "about",
+  },
 ];
 
 const AdminHeader = () => {
@@ -37,7 +53,7 @@ const AdminHeader = () => {
       {/* Mobile Menu Trigger */}
       <div className="lg:hidden  ">
         <Sheet>
-          <SheetTrigger  asChild>
+          <SheetTrigger asChild>
             <Button variant="outline" size="icon">
               <Menu className="w-6 h-6" />
             </Button>
@@ -52,7 +68,7 @@ const AdminHeader = () => {
               <div>
                 <h2 className="text-lg font-semibold cursor-pointer text-gray-800">
                   <Link
-                    to="/"
+                    to="/dashboard"
                     className="hover:underline hover:text-blue-600 transition-colors duration-200"
                   >
                     {user?.fullName

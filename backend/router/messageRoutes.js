@@ -8,7 +8,7 @@ import { isAuthenticated  } from "../middlewares/auth.js"; // ✅ Corrected
 
 const router = express.Router();
 
-router.post("/send", sendMessage); // public
+router.post("/contact", sendMessage); // public
 router.get("/getall", isAuthenticated, getAllMessages); // admin only
 router.delete("/delete/:id", isAuthenticated, deleteMessage); // admin only
 
