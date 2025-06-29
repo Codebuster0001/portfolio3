@@ -1,4 +1,6 @@
+// backend/utils/sendEmail.js
 import nodeMailer from "nodemailer";
+
 export const sendEmail = async (options) => {
   const transporter = nodeMailer.createTransport({
     host: process.env.SMPT_HOST,
@@ -11,10 +13,11 @@ export const sendEmail = async (options) => {
   });
 
   const mailOptions = {
-    from: process.env.SMPT_MAIL,
+    from: `"Deepak Kushwaha" <${process.env.SMPT_MAIL}>`,
     to: options.email,
     subject: options.subject,
     text: options.message,
   };
+
   await transporter.sendMail(mailOptions);
 };

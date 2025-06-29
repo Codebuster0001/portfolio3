@@ -1,4 +1,3 @@
-// src/components/common/AdminHeader.jsx
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,7 +6,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 import { logout } from "@/store/slices/userSlice";
 import { LayoutDashboard, Menu } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,26 +20,11 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const links = [
-  {
-    name: "Skills",
-    path: "skill",
-  },
-  {
-    name: "Timeline",
-    path: "timeline",
-  },
-  {
-    name: "Messages",
-    path: "messages",
-  },
-  {
-    name: "Projects",
-    path: "project",
-  },
-  {
-    name: "Profile",
-    path: "about",
-  },
+  { name: "Skills", path: "skill" },
+  { name: "Timeline", path: "timeline" },
+  { name: "Messages", path: "messages" },
+  { name: "Projects", path: "project" },
+  { name: "Profile", path: "about" },
 ];
 
 const AdminHeader = () => {
@@ -51,7 +41,7 @@ const AdminHeader = () => {
   return (
     <header className="w-full px-6 py-[17.5px] flex justify-between items-center border-b bg-white sticky top-0 z-50 shadow-sm">
       {/* Mobile Menu Trigger */}
-      <div className="lg:hidden  ">
+      <div className="lg:hidden">
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="outline" size="icon">
@@ -63,6 +53,14 @@ const AdminHeader = () => {
             side="left"
             className="bg-white text-black pt-12 w-[250px]"
           >
+            {/* ✅ Accessibility title and description */}
+            <SheetTitle className="sr-only">
+              Mobile Sidebar Navigation
+            </SheetTitle>
+            <SheetDescription className="sr-only">
+              Admin dashboard navigation menu for smaller screens.
+            </SheetDescription>
+
             {/* Header inside Sheet */}
             <div className="flex items-center mt-5 justify-between mb-6">
               <div>
@@ -109,7 +107,7 @@ const AdminHeader = () => {
         </Sheet>
       </div>
 
-      {/* Logo / Title for Large Screens */}
+      {/* Title for Large Screens */}
       <h1 className="text-xl font-semibold tracking-wide hidden lg:block">
         Admin Dashboard
       </h1>

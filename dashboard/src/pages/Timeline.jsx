@@ -46,9 +46,7 @@ const Timeline = () => {
   }, [dispatch, error, message]);
 
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this entry?")) {
-      dispatch(deleteTimeline(id));
-    }
+    dispatch(deleteTimeline(id));
   };
 
   const handleEditClick = (timeline) => {
@@ -62,30 +60,43 @@ const Timeline = () => {
   };
 
   return (
-    <div className="p-6 space-y-8">
-      <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold text-primary">Manage Timeline</h2>
+    <div className="p-6 space-y-10">
+      {/* Header */}
+      <div className="flex flex-col gap-2 md:flex-row md:justify-between md:items-center">
+        <div>
+          <h2 className="text-3xl font-bold text-primary">
+            📜 Manage Timeline
+          </h2>
+          <p className="text-sm text-muted-foreground italic mt-1">
+            “The future depends on what you do today.” – Mahatma Gandhi
+          </p>
+        </div>
         <Button onClick={() => navigate("/dashboard/timeline/addtimeline")}>
           <Plus className="w-4 h-4 mr-2" />
           Add Timeline
         </Button>
       </div>
 
+      {/* Timeline Cards */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {paginatedTimelines.length === 0 ? (
-          <p className="text-gray-500">No timeline entries found.</p>
+          <p className="text-muted-foreground text-center col-span-full">
+            No timeline entries found.
+          </p>
         ) : (
           paginatedTimelines.map((item) => (
             <Card
               key={item._id}
-              className="p-5 shadow-md transition hover:shadow-xl border border-muted-foreground/10"
+              className="p-6 border border-border bg-background shadow hover:shadow-xl transition rounded-xl space-y-3"
             >
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-xl font-bold text-primary">{item.year}</h3>
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-semibold text-accent-foreground">
+                  {item.year}
+                </h3>
                 <div className="flex gap-2">
                   <Button
                     size="sm"
-                    variant="secondary"
+                    variant="outline"
                     onClick={() => handleEditClick(item)}
                   >
                     <Pencil className="w-4 h-4 mr-1" />
@@ -102,18 +113,21 @@ const Timeline = () => {
                   </Button>
                 </div>
               </div>
-              <p className="font-medium text-base">{item.title}</p>
-              <p className="text-sm text-muted-foreground">
-                {item.description}
-              </p>
+
+              <div className="space-y-1">
+                <p className="text-lg font-medium">{item.title}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {item.description}
+                </p>
+              </div>
             </Card>
           ))
         )}
       </div>
 
-      {/* Pagination Controls */}
+      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-4 flex-wrap">
+        <div className="flex justify-center gap-2 flex-wrap pt-4">
           <Button
             variant="outline"
             size="sm"

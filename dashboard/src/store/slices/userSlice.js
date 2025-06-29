@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Initial State
+// Initial state
 const initialState = {
   loading: false,
   user: {},
@@ -122,7 +122,7 @@ const userSlice = createSlice({
   },
 });
 
-// ---------------- EXPORT ACTIONS ----------------
+// Export actions
 export const {
   loginRequest,
   loginSuccess,
@@ -144,6 +144,8 @@ export const {
 } = userSlice.actions;
 
 // ---------------- THUNKS ----------------
+
+// Login
 export const login = (email, password) => async (dispatch) => {
   dispatch(loginRequest());
   try {
@@ -165,6 +167,7 @@ export const login = (email, password) => async (dispatch) => {
   }
 };
 
+// Get Logged-in User
 export const getUser = () => async (dispatch) => {
   dispatch(loadUserRequest());
   try {
@@ -177,6 +180,7 @@ export const getUser = () => async (dispatch) => {
   }
 };
 
+// Logout
 export const logout = () => async (dispatch) => {
   try {
     const { data } = await axios.get(
@@ -191,6 +195,7 @@ export const logout = () => async (dispatch) => {
   }
 };
 
+// Update Password
 export const updatePassword =
   (currentPassword, newPassword, confirmNewPassword) => async (dispatch) => {
     dispatch(updatePasswordRequest());
@@ -211,6 +216,7 @@ export const updatePassword =
     }
   };
 
+// Update Profile
 export const updateProfile = (formData) => async (dispatch) => {
   dispatch(updateProfileRequest());
   try {
@@ -230,10 +236,10 @@ export const updateProfile = (formData) => async (dispatch) => {
   }
 };
 
-// ✅ Reset combined
+// Helpers
 export const resetProfile = () => (dispatch) => {
   dispatch(resetUpdateState());
-  dispatch(clearMessage()); // ✅ Prevent message replay on reload
+  dispatch(clearMessage());
 };
 
 export const clearAllUserErrors = () => (dispatch) => {

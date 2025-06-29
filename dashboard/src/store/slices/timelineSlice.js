@@ -1,4 +1,3 @@
-// src/store/slices/timelineSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -124,10 +123,12 @@ export const updateTimeline = (id, timelineData) => async (dispatch) => {
 };
 
 // ✅ Helpers
+
 export const clearTimelineErrors = () => (dispatch) =>
   dispatch(timelineSlice.actions.clearErrors());
 
 export const clearTimelineMessages = () => (dispatch) =>
   dispatch(timelineSlice.actions.clearMessages());
 
+// ✅ Export reducer
 export default timelineSlice.reducer;

@@ -1,14 +1,211 @@
-import React from 'react'
-import Messages from './subcomponents/Messages'
-import AddTimeline from './subcomponents/AddTimeline'
+import {
+  Chart as ChartJS,
+  LineElement,
+  PointElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+
+import {
+  getAllProjects,
+  clearAllProjectErrors,
+} from "@/store/slices/projectSlice";
+import {
+  getAllMessages,
+  clearAllMessageErrors,
+} from "@/store/slices/messageSlice";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+ChartJS.register(
+  LineElement,
+  PointElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend
+);
 
 const Dashboard = () => {
-  return (
-    <div>
-      <Messages/>
-      <AddTimeline/>
-    </div>
-  )
-}
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-export default Dashboard
+  const { user } = useSelector((state) => state.user);
+  const {
+    projects,
+    loading: projectLoading,
+    error: projectError,
+  } = useSelector((state) => state.project);
+
+  const { messages, error: messageError } = useSelector(
+    (state) => state.messages
+  );
+
+  useEffect(() => {
+    dispatch(getAllProjects());
+    dispatch(getAllMessages());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (projectError) {
+      toast.error(projectError);
+      dispatch(clearAllProjectErrors());
+    }
+    if (messageError) {
+      toast.error(messageError);
+      dispatch(clearAllMessageErrors());
+    }
+  }, [projectError, messageError, dispatch]);
+
+  const projectCount = projects?.length || 0;
+
+  const projectChartData = {
+    labels: projects.map((p, index) => `Project ${index + 1}`),
+    datasets: [
+      {
+        label: "Projects",
+        data: projects.map(() => 1),
+        fill: false,
+        borderColor: "#3b82f6",
+        backgroundColor: "#3b82f6",
+        tension: 0.3,
+      },
+    ],
+  };
+
+  return (
+    <section className="flex flex-col gap-8 px-4 sm:px-6 py-6 bg-background min-h-screen">
+      {/* Top Section */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        <Card className="flex-1">
+          <CardHeader>
+            <CardTitle className="text-lg text-muted-foreground">
+              Welcome back 👋
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              {user?.description || "No profile information available."}
+            </p>
+          </CardHeader>
+          <CardFooter>
+            {user?.portfolioURL ? (
+              <Button asChild>
+                <a
+                  href={user.portfolioURL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Visit Portfolio
+                </a>
+              </Button>
+            ) : (
+              <p className="text-muted-foreground text-sm">
+                No portfolio URL provided.
+              </p>
+            )}
+          </CardFooter>
+        </Card>
+
+        <Card className="w-full max-w-sm">
+          <CardHeader>
+            <CardTitle className="text-sm text-muted-foreground">
+              Projects
+            </CardTitle>
+            <CardTitle className="text-4xl font-bold">
+              {projectLoading ? "Loading..." : projectCount}
+            </CardTitle>
+          </CardHeader>
+          <CardFooter>
+            <Button
+              onClick={() => navigate("/dashboard/project")}
+              className="w-full"
+            >
+              Manage Projects
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+
+      {/* Project Line Chart */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">
+            Project Overview
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Line data={projectChartData} />
+        </CardContent>
+      </Card>
+
+      {/* Latest Messages */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">
+            Latest Messages
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Message</TableHead>
+                <TableHead>Reply</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {messages
+                ?.slice(-15) // latest 15 messages only
+                .reverse()
+                .map((msg) => (
+                  <TableRow key={msg._id}>
+                    <TableCell>{msg.name}</TableCell>
+                    <TableCell>{msg.email}</TableCell>
+                    <TableCell className="max-w-[200px] truncate">
+                      {msg.message}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() =>
+                          navigate(`/dashboard/messages?reply=${msg._id}`)
+                        }
+                      >
+                        Reply
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </section>
+  );
+};
+
+export default Dashboard;

@@ -1,18 +1,18 @@
-import React from "react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { SparklesText } from "@/components/magicui/sparkles-text";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { SparklesText } from "@/components/magicui/sparkles-text";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
 
 const Contact = () => {
+ 
   return (
     <section
       id="contact"
       className="min-h-screen flex items-center justify-center px-4 py-16 md:py-28 bg-black text-white"
     >
       <div className="max-w-6xl w-full space-y-12">
-        {/* Heading */}
         <div className="text-center">
           <SparklesText className="text-4xl md:text-5xl font-bold tracking-tight">
             Let's Connect
@@ -23,13 +23,11 @@ const Contact = () => {
           </p>
         </div>
 
-        {/* Content Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          {/* Left: Contact Form */}
           <Card className="bg-neutral-900 border border-gray-700 text-white shadow-2xl">
             <CardHeader className="pb-0" />
             <CardContent className="space-y-5">
-              <form className="space-y-5">
+              <form className="space-y-5" onSubmit={handleSubmit}>
                 <div className="space-y-2">
                   <label
                     htmlFor="name"
@@ -40,8 +38,10 @@ const Contact = () => {
                   <Input
                     id="name"
                     type="text"
+                    value={formData.name}
+                    onChange={handleChange}
                     placeholder="John Doe"
-                    className="bg-gray-800 text-white placeholder-gray-500 border-gray-700"
+                    className="bg-gray-800 text-white"
                     required
                   />
                 </div>
@@ -56,8 +56,10 @@ const Contact = () => {
                   <Input
                     id="email"
                     type="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     placeholder="john@example.com"
-                    className="bg-gray-800 text-white placeholder-gray-500 border-gray-700"
+                    className="bg-gray-800 text-white"
                     required
                   />
                 </div>
@@ -71,18 +73,21 @@ const Contact = () => {
                   </label>
                   <Textarea
                     id="message"
-                    placeholder="Your message..."
+                    value={formData.message}
+                    onChange={handleChange}
                     rows={5}
-                    className="bg-gray-800 text-white placeholder-gray-500 border-gray-700"
+                    placeholder="Your message..."
+                    className="bg-gray-800 text-white"
                     required
                   />
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white transition-transform hover:scale-[1.02]"
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+                  disabled={loading}
                 >
-                  Send Message
+                  {loading ? "Sending..." : "Send Message"}
                 </Button>
               </form>
             </CardContent>

@@ -1,7 +1,7 @@
-// src/pages/subcomponents/Account.jsx
 import { useState, useEffect } from "react";
 import { FaEdit, FaLock, FaUser } from "react-icons/fa";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { X } from "lucide-react";
 
 const Account = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -9,7 +9,7 @@ const Account = () => {
   const navigate = useNavigate();
 
   const menuItems = [
-    { label: "Profile", path: "/dashboard/about/profile", icon: <FaUser /> },
+    { label: " Profile", path: "/dashboard/about/profile", icon: <FaUser /> },
     {
       label: "Update Profile",
       path: "/dashboard/about/update-profile",
@@ -31,63 +31,80 @@ const Account = () => {
   }, [location.pathname, navigate]);
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      {/* Mobile Toggle Button */}
-      <button
-        className="md:hidden fixed top-4 left-4 z-30 bg-white dark:bg-gray-900 p-2 rounded shadow"
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-      >
-        ☰
-      </button>
+    <div className="flex h-screen overflow-hidden relative ">
+      {/* Sidebar Overlay on Mobile */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-10 backdrop-blur-sm md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
 
-      {/* Fixed Sidebar */}
+      {/* Sidebar */}
       <aside
-        className={`fixed  h-full w-[220px] lg:w-[250px] bg-white dark:bg-gray-900 shadow-sm z-20 transform transition-transform duration-300 ${
+        className={`fixed h-full w-[220px] md:w-[250px] bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-700 z-20 transform transition-transform duration-300 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
       >
-        <div className="p-4">
-          <h2 className="text-lg font-bold mb-6 text-gray-800 dark:text-white">
-            Account Settings
-          </h2>
-          <nav className="flex flex-col gap-2 text-sm font-medium text-muted-foreground">
+        <div className="p-5 space-y-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-bold text-primary">Account Settings</h2>
+            <button
+              className="md:hidden p-1 rounded hover:bg-muted"
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              <X className="w-5 h-5 text-zinc-600 dark:text-zinc-300" />
+            </button>
+          </div>
+          <nav className="flex flex-col gap-2">
             {menuItems.map((item) => (
               <NavLink
                 key={item.label}
                 to={item.path}
                 onClick={() => setIsSidebarOpen(false)}
                 className={({ isActive }) =>
-                  `flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-200 ${
+                  `flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition ${
                     isActive
-                      ? "bg-gray-100 dark:bg-gray-800 text-black dark:text-white font-semibold shadow"
-                      : "hover:text-black hover:bg-gray-50 dark:hover:bg-gray-800"
+                      ? "bg-primary/10 text-primary shadow"
+                      : "hover:bg-muted text-muted-foreground"
                   }`
                 }
               >
-                {item.icon} {item.label}
+                {item.icon}
+                <span>{item.label}</span>
               </NavLink>
             ))}
           </nav>
         </div>
       </aside>
 
-      {/* Main Content (scrolls vertically) */}
-      <div className="flex-1 ml-[220px] lg:ml-[250px] h-full overflow-y-auto p-4 md:p-6 scrollbar-hide">
-        <div className="max-w-5xl mx-auto space-y-6 pb-24">
+      {/* Mobile Toggle */}
+      <button
+        className="md:hidden fixed top-4 left-4 z-30 bg-background p-2 rounded-lg border shadow"
+        onClick={() => setIsSidebarOpen(true)}
+      >
+        ☰
+      </button>
+
+      {/* Main Content */}
+      <main className="flex-1 md:ml-[250px] p-4 md:p-8 overflow-y-auto scrollbar-hide">
+        <div className="max-w-5xl mx-auto space-y-6">
+          {/* Header */}
           <div className="space-y-1">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-800 dark:text-white capitalize">
+            <h1 className="text-3xl font-bold tracking-tight capitalize text-zinc-800 dark:text-white">
               {currentRoute}
             </h1>
-            <p className="text-muted-foreground text-sm">
-              Manage your {currentRoute} settings
+            <p className="text-sm text-muted-foreground">
+              Manage your {currentRoute} settings below.
             </p>
           </div>
 
-          <section className="bg-white dark:bg-gray-950 rounded-xl shadow-md p-6">
+          {/* Content */}
+          <section className="bg-card border border-border rounded-2xl shadow-md p-6 transition-all">
             <Outlet />
           </section>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

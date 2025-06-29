@@ -1,4 +1,3 @@
-// src/pages/UpdateProfile.jsx
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
@@ -60,7 +59,6 @@ const UpdateProfile = () => {
     formData.append("githubURL", githubURL);
     formData.append("instagramURL", instagramURL);
 
-    // ✅ Send as JSON string for backend to parse
     const techArray = technologies
       .split(",")
       .map((tech) => tech.trim())
@@ -81,7 +79,6 @@ const UpdateProfile = () => {
     }
 
     if (isUpdated) {
-      toast.success("Profile updated successfully!");
       dispatch(getUser());
       dispatch(resetProfile());
     }

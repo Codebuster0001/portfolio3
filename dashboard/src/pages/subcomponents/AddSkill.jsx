@@ -1,91 +1,159 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import {
-  addNewSkill,
-  updateSkill,
-  getAllSkills,
-} from "@/store/slices/skillSlice";
-import { useState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addSkill, getAllSkills } from "@/store/slices/skillSlice";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { motion } from "framer-motion";
+import { allIcons, iconNameList } from "@/utils/iconList"; // 👈 icon map and list
 
 const AddSkill = () => {
-  const location = useLocation();
-  const existingSkill = location.state || null;
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.skill);
+
   const [formData, setFormData] = useState({
     label: "",
     iconName: "",
     link: "",
-    color: "text-white",
-    order: 0,
+    color: "",
   });
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const [suggestions, setSuggestions] = useState([]);
+  const suggestionRef = useRef(null);
 
+  const { label, iconName, link, color } = formData;
+
+  // Icon preview logic
+  const IconPreview = useMemo(() => {
+    const Icon = allIcons[iconName];
+    return Icon ? (
+      <Icon className={`text-3xl ${color || "text-white"}`} />
+    ) : null;
+  }, [iconName, color]);
+
+  // Click outside dropdown = close
   useEffect(() => {
-    if (existingSkill) {
-      setFormData(existingSkill);
-    }
-  }, [existingSkill]);
+    const handleClickOutside = (e) => {
+      if (suggestionRef.current && !suggestionRef.current.contains(e.target)) {
+        setSuggestions([]);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "order" ? Number(value) : value,
+      [name]: value,
     }));
+
+    if (name === "iconName") {
+      const filtered = iconNameList
+        .filter((i) => i.toLowerCase().includes(value.toLowerCase()))
+        .slice(0, 10);
+      setSuggestions(filtered);
+    }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSuggestionClick = (name) => {
+    setFormData((prev) => ({ ...prev, iconName: name }));
+    setSuggestions([]);
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (existingSkill) {
-      await dispatch(updateSkill(existingSkill._id, formData));
-    } else {
-      await dispatch(addNewSkill(formData));
+
+    if (!label || !iconName || !link) {
+      toast.error("Please fill in all required fields.");
+      return;
     }
+
+    if (!allIcons[iconName]) {
+      toast.error("Invalid icon name.");
+      return;
+    }
+
+    dispatch(addSkill(formData));
+    setFormData({ label: "", iconName: "", link: "", color: "" });
+    setSuggestions([]);
     dispatch(getAllSkills());
-    navigate("/dashboard/skill");
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-6 space-y-4 max-w-lg mx-auto">
-      <Input
-        name="label"
-        placeholder="Label"
-        value={formData.label}
-        onChange={handleChange}
-        required
-      />
-      <Input
-        name="iconName"
-        placeholder="Icon Name (e.g. SiReact)"
-        value={formData.iconName}
-        onChange={handleChange}
-        required
-      />
-      <Input
-        name="link"
-        placeholder="Link"
-        value={formData.link}
-        onChange={handleChange}
-        required
-      />
-      <Input
-        name="color"
-        placeholder="Color (e.g. text-blue-500)"
-        value={formData.color}
-        onChange={handleChange}
-      />
-      <Input
-        name="order"
-        type="number"
-        placeholder="Order"
-        value={formData.order}
-        onChange={handleChange}
-      />
-      <Button type="submit">{existingSkill ? "Update" : "Add"} Skill</Button>
-    </form>
+    <div className="max-w-2xl mx-auto mt-10 bg-background p-8 rounded-2xl shadow-md border border-border">
+      <h2 className="text-2xl font-bold text-center mb-4">Add New Skill</h2>
+
+      <form onSubmit={handleSubmit} className="space-y-5 relative">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <Input
+            type="text"
+            name="label"
+            value={label}
+            onChange={handleChange}
+            placeholder="Skill Label (e.g., React)"
+            required
+          />
+          <div className="relative" ref={suggestionRef}>
+            <Input
+              type="text"
+              name="iconName"
+              value={iconName}
+              onChange={handleChange}
+              placeholder="Icon Name (e.g., SiReact, FaNodeJs)"
+              required
+              autoComplete="off"
+            />
+            {suggestions.length > 0 && (
+              <ul className="absolute z-10 bg-background border rounded shadow w-full max-h-48 overflow-y-auto">
+                {suggestions.map((name) => (
+                  <li
+                    key={name}
+                    className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
+                    onClick={() => handleSuggestionClick(name)}
+                  >
+                    {name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+
+        <Input
+          type="url"
+          name="link"
+          value={link}
+          onChange={handleChange}
+          placeholder="Skill Link (e.g., https://reactjs.org)"
+          required
+        />
+
+        <Input
+          type="text"
+          name="color"
+          value={color}
+          onChange={handleChange}
+          placeholder="Tailwind Color (e.g., text-cyan-400)"
+        />
+
+        {IconPreview && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-2"
+          >
+            <span className="text-sm text-muted-foreground">Live Preview:</span>
+            {IconPreview}
+          </motion.div>
+        )}
+
+        <Button type="submit" disabled={loading} className="w-full">
+          {loading ? "Adding..." : "Add Skill"}
+        </Button>
+      </form>
+    </div>
   );
 };
 

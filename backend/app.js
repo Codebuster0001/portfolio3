@@ -16,7 +16,6 @@ import skillRouter from "./router/skillsRoutes.js";
 import projectRouter from "./router/projectRoutes.js";
 
 const app = express();
-
 // CORS config
 app.use(
   cors({
@@ -43,9 +42,8 @@ app.use(
 app.use("/api/v1/message", messageRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/timeline", timelineRouter);
-app.use("/api/v1/skill", skillRouter);
+app.use("/api/v1/skills", skillRouter);
 app.use("/api/v1/projects", projectRouter);
-
 dbConnection();
 
 app.use(errorMiddleware);

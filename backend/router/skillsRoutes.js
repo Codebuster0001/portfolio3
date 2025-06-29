@@ -1,17 +1,21 @@
+// router/skillsRoutes.js
 import express from "express";
 import {
   addNewSkill,
-  deleteSkill,
   getAllSkills,
-  updateSkill,
+  deleteSkillBySchemaOrder,
 } from "../controller/skillController.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-router.post("/create", isAuthenticated, addNewSkill);
-router.delete("/delete/:id", isAuthenticated, deleteSkill);
-router.put("/update/:id", isAuthenticated, updateSkill);
+// ✅ Add new skill (auto-increment order & prevent duplicates)
+router.post("/add", isAuthenticated, addNewSkill);
+
+// ✅ Get all skills sorted by order
 router.get("/getall", getAllSkills);
+
+// ✅ Delete skill by order (not ID) & reorder others
+router.delete("/delete/:order", isAuthenticated, deleteSkillBySchemaOrder);
 
 export default router;

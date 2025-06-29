@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardDescription,
+} from "@/components/ui/card";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -64,13 +70,31 @@ const AddTimeline = () => {
   }, [dispatch, error, message, navigate]);
 
   return (
-    <div className="min-h-screen p-6 space-y-6">
-      <Card>
+    <div className="min-h-screen p-6 max-w-3xl mx-auto space-y-6">
+      {/* Quote section */}
+      <div className="text-center space-y-1">
+        <h1 className="text-3xl font-bold text-primary">
+          {isEditMode ? "Edit Timeline Entry" : "Create Timeline Entry"}
+        </h1>
+        <p className="text-muted-foreground italic">
+          “Your time is limited, so don’t waste it living someone else’s life.”
+          – Steve Jobs
+        </p>
+      </div>
+
+      <Card className="shadow-lg border border-border">
         <CardHeader>
-          <CardTitle>
-            {isEditMode ? "Edit Timeline Entry" : "Create Timeline Entry"}
+          <CardTitle className="text-xl">
+            {isEditMode
+              ? "Update the timeline details below:"
+              : "Fill in the timeline details below:"}
           </CardTitle>
+          <CardDescription>
+            Please provide the year, title, and a brief description for your
+            timeline entry.
+          </CardDescription>
         </CardHeader>
+
         <CardContent className="space-y-4">
           <div>
             <Label htmlFor="year">Year</Label>
@@ -87,7 +111,7 @@ const AddTimeline = () => {
             <Input
               id="title"
               name="title"
-              placeholder="e.g. Joined ABC Company"
+              placeholder="e.g. Started Freelancing"
               value={formData.title}
               onChange={handleChange}
             />
@@ -97,20 +121,20 @@ const AddTimeline = () => {
             <Input
               id="description"
               name="description"
-              placeholder="Short description"
+              placeholder="Short description of the event"
               value={formData.description}
               onChange={handleChange}
             />
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 pt-2">
             <Button onClick={handleSubmit} disabled={loading}>
               {loading
                 ? isEditMode
                   ? "Updating..."
                   : "Creating..."
                 : isEditMode
-                ? "Update"
-                : "Create"}
+                ? "Update Entry"
+                : "Create Entry"}
             </Button>
             <Button
               type="button"

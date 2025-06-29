@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 
 import { login, clearAllUserErrors } from "@/store/slices/userSlice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Eye, EyeOff } from "lucide-react"; // 👈 import icons
+import { Eye, EyeOff } from "lucide-react";
+import loginGif from "../assets/login2.gif";
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation(); // 🟢 get current route
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // 👈 toggle state
+  const [showPassword, setShowPassword] = useState(false);
 
   const { loading, isAuthenticated, error } = useSelector(
     (state) => state.user
@@ -35,11 +37,12 @@ const Login = () => {
       dispatch(clearAllUserErrors());
     }
 
-    if (isAuthenticated) {
+    // ✅ only show toast if coming from login page
+    if (isAuthenticated && location.pathname === "/login") {
       toast.success("Login successful");
       navigate("/");
     }
-  }, [error, isAuthenticated, dispatch, navigate]);
+  }, [error, isAuthenticated, dispatch, navigate, location.pathname]);
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
@@ -78,7 +81,7 @@ const Login = () => {
                 </div>
                 <Input
                   id="password"
-                  type={showPassword ? "text" : "password"} // 👈 toggle input type
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -106,9 +109,9 @@ const Login = () => {
 
       <div className="hidden lg:flex items-center justify-center bg-muted">
         <img
-          src="/placeholder.svg"
+          src={loginGif}
           alt="Login Illustration"
-          className="h-full w-full object-cover"
+          className="w-3/4 object-cover h-auto"
         />
       </div>
     </div>

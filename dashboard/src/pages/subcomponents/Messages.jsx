@@ -1,40 +1,38 @@
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-} from "@/components/ui/card";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { useEffect, useState, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { toast } from "sonner";
+
 import {
   clearAllMessageErrors,
   deleteMessage,
   getAllMessages,
   resetMessagesSlice,
 } from "@/store/slices/messageSlice";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Mail, MessageSquare, Trash2, UserRoundCheck } from "lucide-react";
 
 const Messages = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const replyId = searchParams.get("reply");
+  const messageRefs = useRef({});
 
   const { messages, loading, error, message } = useSelector(
-    (state) => state.messages || {} // Prevent destructure error
+    (state) => state.messages || {}
   );
 
   const [messageId, setMessageId] = useState("");
-
-  const handleReturnToDashboard = () => {
-    navigate("/");
-  };
-
-  const handleMessageDelete = (id) => {
-    setMessageId(id);
-    dispatch(deleteMessage(id));
-  };
 
   useEffect(() => {
     dispatch(getAllMessages());
@@ -48,55 +46,120 @@ const Messages = () => {
 
     if (message) {
       toast.success(message);
-      dispatch(resetMessagesSlice()); // Only reset error/message, not messages array
+      dispatch(resetMessagesSlice());
+      dispatch(getAllMessages());
     }
   }, [dispatch, error, message]);
 
+  useEffect(() => {
+    if (replyId && messageRefs.current[replyId]) {
+      messageRefs.current[replyId].scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [messages, replyId]);
+
+  const handleSingleDelete = (id) => {
+    setMessageId(id);
+    dispatch(deleteMessage(id));
+  };
+
+  const openMailClientReply = (email, name = "") => {
+    const subject = `RE: Message from ${name}`;
+    const body = `Hi ${name},\n\nThank you for reaching out!\n\n[Your message here]\n\nBest regards,\nDeepak Kushwaha`;
+    const mailToLink = `https://mail.google.com/mail/u/0/?fs=1&to=${email}&su=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}&tf=cm`;
+
+    window.open(mailToLink, "_blank");
+  };
+
   return (
-    <div className="min-h-screen sm:gap-4 sm:py-4 sm:pl-20 p-4">
+    <div className="min-h-screen p-6  mx-auto">
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-primary mb-2">
+           💬 Manage Messages
+        </h1>
+        <p className="text-muted-foreground italic">
+          "Communication is the bridge between confusion and clarity." – Nat
+          Turner
+        </p>
+      </div>
+
       <Tabs defaultValue="messages">
         <TabsContent value="messages">
-          <Card>
-            
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {messages && messages.length > 0 ? (
+              [...messages].reverse().map((msg) => (
+                <Card
+                  key={msg._id}
+                  ref={(el) => (messageRefs.current[msg._id] = el)}
+                  className={`hover:shadow-lg transition-all border border-muted-foreground/10 bg-card ${
+                    msg._id === replyId ? "ring-2 ring-blue-500" : ""
+                  }`}
+                >
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <UserRoundCheck
+                        className="text-muted-foreground"
+                        size={18}
+                      />
+                      {msg.name || "Unknown Sender"}
+                    </CardTitle>
+                  </CardHeader>
 
-            <CardContent className="grid sm:grid-cols-2 gap-4">
-              {messages && messages.length > 0 ? (
-                messages.map((element) => (
-                  <Card key={element._id} className="p-4 flex flex-col gap-2">
-                    <CardDescription className="text-slate-950">
-                      <span className="font-bold mr-2">Sender Name:</span>
-                      {element.senderName}
-                    </CardDescription>
-                    <CardDescription className="text-slate-950">
-                      <span className="font-bold mr-2">Subject:</span>
-                      {element.subject}
-                    </CardDescription>
-                    <CardDescription className="text-slate-950">
-                      <span className="font-bold mr-2">Message:</span>
-                      {element.message}
-                    </CardDescription>
+                  <CardContent className="text-sm text-muted-foreground space-y-4">
+                    <div className="flex gap-2 items-center flex-wrap">
+                      <Mail size={16} className="text-muted-foreground" />
+                      <span className="font-medium">Email:</span>
+                      <span className="text-blue-600 break-all">
+                        {msg.email}
+                      </span>
+                    </div>
 
-                    <CardFooter className="justify-end">
-                      <Button
-                        onClick={() => handleMessageDelete(element._id)}
-                        disabled={loading && messageId === element._id}
-                        className="w-32"
-                        variant="destructive"
-                      >
-                        {loading && messageId === element._id
-                          ? "Deleting..."
-                          : "Delete"}
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))
-              ) : (
-                <div className="col-span-full text-center text-muted-foreground text-lg py-8">
-                  No Messages Found!
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                    <div className="flex gap-2 items-start">
+                      <MessageSquare
+                        size={16}
+                        className="text-muted-foreground mt-1"
+                      />
+                      <div className="flex gap-2">
+                        <span className="font-medium">Message:</span>
+                        <p className="text-slate-700 break-words whitespace-pre-line">
+                          {msg.message}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+
+                  <CardFooter className="flex justify-between items-center mt-4 gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => openMailClientReply(msg.email, msg.name)}
+                    >
+                      Reply
+                    </Button>
+
+                    <Button
+                      onClick={() => handleSingleDelete(msg._id)}
+                      disabled={loading && messageId === msg._id}
+                      variant="destructive"
+                      size="sm"
+                    >
+                      {loading && messageId === msg._id
+                        ? "Deleting..."
+                        : "Delete"}
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))
+            ) : (
+              <div className="col-span-full text-center text-muted-foreground text-lg py-20">
+                📭 No messages in your inbox yet.
+              </div>
+            )}
+          </div>
         </TabsContent>
       </Tabs>
     </div>

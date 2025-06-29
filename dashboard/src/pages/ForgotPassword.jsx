@@ -10,6 +10,8 @@ import {
   clearAllForgotResetPassErrors,
 } from "@/store/slices/forgotResetPasswordSlice";
 
+import forgotPasswordGif from "../assets/Forgotpassword.gif"
+
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const dispatch = useDispatch();
@@ -74,7 +76,11 @@ const ForgotPassword = () => {
       </div>
 
       <div className="hidden lg:flex items-center justify-center bg-muted">
-        <img src="/forgot.png" alt="Forgot" className="w-3/4 h-auto" />
+        <img
+          src={forgotPasswordGif}
+          alt="Forgot Illustration"
+          className="w-3/4 object-cover h-auto"
+        />
       </div>
     </div>
   );

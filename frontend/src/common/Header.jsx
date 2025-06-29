@@ -25,10 +25,9 @@ export default function Header() {
     } else {
       window.location.href = href;
     }
-    setIsSheetOpen(false); // Close the mobile menu
+    setIsSheetOpen(false); // Close mobile menu if open
   };
 
-  // Auto-close the sheet on screen resize to md and up
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
@@ -48,11 +47,15 @@ export default function Header() {
           className="px-2"
           onClick={() => handleNavClick("/")}
         >
-          <img src={logo} alt="Deepak.dev" className="h-10 w-10 rounded-full" />
+          <img
+            src={logo}
+            alt="Deepak.dev Logo"
+            className="h-10 w-10 rounded-full"
+          />
         </Button>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex space-x-6">
+        <nav className="hidden md:flex space-x-6" aria-label="Main Navigation">
           {navLinks.map(({ name, href }) => (
             <button
               key={name}
@@ -79,7 +82,10 @@ export default function Header() {
               side="right"
               className="bg-black text-white p-6 mt-5 flex flex-col"
             >
-              <nav className="flex flex-col h-full justify-evenly">
+              <nav
+                className="flex flex-col h-full justify-evenly"
+                aria-label="Mobile Navigation"
+              >
                 {navLinks.map(({ name, href }) => (
                   <button
                     key={name}

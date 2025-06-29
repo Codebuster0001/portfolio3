@@ -1,107 +1,102 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { toast } from "sonner";
 
-
+// Initial state
 const skillSlice = createSlice({
   name: "skill",
   initialState: {
-    loading: false,
     skills: [],
+    loading: false,
     error: null,
     message: null,
   },
   reducers: {
-    requestStart(state) {
+    requestStart: (state) => {
       state.loading = true;
       state.error = null;
       state.message = null;
     },
-    getAllSkillsSuccess(state, action) {
-      state.skills = action.payload;
+    getSkillsSuccess: (state, action) => {
       state.loading = false;
+      state.skills = action.payload;
     },
-    successMessage(state, action) {
+    requestSuccess: (state, action) => {
       state.loading = false;
       state.message = action.payload;
     },
-    failure(state, action) {
+    requestFail: (state, action) => {
       state.loading = false;
       state.error = action.payload;
+      toast.error(action.payload);
     },
-    clearAllErrors(state) {
+    clearSkillMessages: (state) => {
       state.error = null;
-    },
-    resetSkillState(state) {
-      state.loading = false;
       state.message = null;
-      state.error = null;
     },
   },
 });
 
 export const {
   requestStart,
-  getAllSkillsSuccess,
-  successMessage,
-  failure,
-  clearAllErrors,
-  resetSkillState,
+  getSkillsSuccess,
+  requestSuccess,
+  requestFail,
+  clearSkillMessages,
 } = skillSlice.actions;
 
+export default skillSlice.reducer;
+
+// Axios Config
+const axiosConfig = {
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
+};
+
+// ✅ 1. Get all skills
 export const getAllSkills = () => async (dispatch) => {
   dispatch(requestStart());
   try {
     const { data } = await axios.get(
-      "http://localhost:5000/api/v1/skill/getall"
+      "http://localhost:5000/api/v1/skills/getall"
     );
-    dispatch(getAllSkillsSuccess(data.skills));
-  } catch (error) {
-    dispatch(failure(error.response?.data?.message || error.message));
+    dispatch(getSkillsSuccess(data.skills));
+  } catch (err) {
+    dispatch(requestFail(err.response?.data?.message || err.message));
   }
 };
 
-export const addNewSkill = (formData) => async (dispatch) => {
+// ✅ 2. Add new skill
+export const addSkill = (formData) => async (dispatch) => {
   dispatch(requestStart());
   try {
     const { data } = await axios.post(
-      "http://localhost:5000/api/v1/skill/create",
+      "http://localhost:5000/api/v1/skills/add",
       formData,
-      {
-        headers: { "Content-Type": "application/json" },
-      }
+      axiosConfig
     );
-    dispatch(successMessage(data.message));
-  } catch (error) {
-    dispatch(failure(error.response?.data?.message || error.message));
+    dispatch(requestSuccess(data.message));
+    toast.success(data.message);
+    dispatch(getAllSkills()); // Refresh list
+  } catch (err) {
+    dispatch(requestFail(err.response?.data?.message || err.message));
   }
 };
 
-export const updateSkill = (id, formData) => async (dispatch) => {
-  dispatch(requestStart());
-  try {
-    const { data } = await axios.put(
-      `http://localhost:5000/api/v1/skill/update/${id}`,
-      formData,
-      {
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-    dispatch(successMessage(data.message));
-  } catch (error) {
-    dispatch(failure(error.response?.data?.message || error.message));
-  }
-};
-
-export const deleteSkill = (id) => async (dispatch) => {
+// ✅ 3. Delete skill by order
+export const deleteSkill = (order) => async (dispatch) => {
   dispatch(requestStart());
   try {
     const { data } = await axios.delete(
-      `http://localhost:5000/api/v1/skill/delete/${id}`
+      `http://localhost:5000/api/v1/skills/delete/${order}`,
+      axiosConfig
     );
-    dispatch(successMessage(data.message));
-  } catch (error) {
-    dispatch(failure(error.response?.data?.message || error.message));
+    dispatch(requestSuccess(data.message));
+    toast.success(data.message);
+    dispatch(getAllSkills()); // Refresh list
+  } catch (err) {
+    dispatch(requestFail(err.response?.data?.message || err.message));
   }
 };
-
-export default skillSlice.reducer;

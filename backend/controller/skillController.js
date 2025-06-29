@@ -2,9 +2,9 @@ import { Skill } from "../models/skillSchema.js";
 import { catchAsyncErrors } from "../middlewares/catchAsyncErrors.js";
 import { ErrorHandler } from "../middlewares/error.js";
 
-// ✅ Add a new skill
+// ✅ Add a new skill with uniqueness check
 export const addNewSkill = catchAsyncErrors(async (req, res, next) => {
-  const { label, iconName, link, color, order } = req.body;
+  const { label, iconName, link, color } = req.body;
 
   if (!label || !iconName || !link) {
     return next(
@@ -12,12 +12,33 @@ export const addNewSkill = catchAsyncErrors(async (req, res, next) => {
     );
   }
 
+  const trimmedLabel = label.trim();
+  const trimmedIcon = iconName.trim();
+  const trimmedLink = link.trim();
+
+  // Check for duplicate label, iconName, or link
+  const existing = await Skill.findOne({
+    $or: [
+      { label: trimmedLabel },
+      { iconName: trimmedIcon },
+      { link: trimmedLink },
+    ],
+  });
+
+  if (existing) {
+    return next(
+      new ErrorHandler("Label, iconName, or link already exists", 409)
+    );
+  }
+
+  const count = await Skill.countDocuments();
+
   const skill = await Skill.create({
-    label,
-    iconName,
-    link,
-    color,
-    order,
+    label: trimmedLabel,
+    iconName: trimmedIcon,
+    link: trimmedLink,
+    color: color?.trim() || "text-white",
+    order: count + 1,
   });
 
   res.status(201).json({
@@ -27,53 +48,39 @@ export const addNewSkill = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// ✅ Get all skills
-export const getAllSkills = catchAsyncErrors(async (req, res, next) => {
-  const skills = await Skill.find().sort({ order: 1 });
+// ✅ Delete skill by schema order number and shift remaining
+export const deleteSkillBySchemaOrder = catchAsyncErrors(
+  async (req, res, next) => {
+    const { order } = req.params;
+    const numericOrder = Number(order);
 
-  if (!skills || skills.length === 0) {
-    return next(new ErrorHandler("No skills found", 404));
+    const skillToDelete = await Skill.findOne({ order: numericOrder });
+
+    if (!skillToDelete) {
+      return next(new ErrorHandler(`Skill with order ${order} not found`, 404));
+    }
+
+    await skillToDelete.deleteOne();
+
+    // Decrement order for skills after the deleted one
+    await Skill.updateMany(
+      { order: { $gt: numericOrder } },
+      { $inc: { order: -1 } }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: `Skill with order ${order} deleted and reordered.`,
+    });
   }
+);
+
+// ✅ Get all skills sorted by order
+export const getAllSkills = catchAsyncErrors(async (req, res) => {
+  const skills = await Skill.find().sort({ order: 1 });
 
   res.status(200).json({
     success: true,
     skills,
-  });
-});
-
-// ✅ Update a skill
-export const updateSkill = catchAsyncErrors(async (req, res, next) => {
-  const { id } = req.params;
-
-  const updatedSkill = await Skill.findByIdAndUpdate(id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-
-  if (!updatedSkill) {
-    return next(new ErrorHandler("Skill not found", 404));
-  }
-
-  res.status(200).json({
-    success: true,
-    message: "Skill updated successfully",
-    skill: updatedSkill,
-  });
-});
-
-// ✅ Delete a skill
-export const deleteSkill = catchAsyncErrors(async (req, res, next) => {
-  const { id } = req.params;
-
-  const skill = await Skill.findById(id);
-  if (!skill) {
-    return next(new ErrorHandler("Skill not found", 404));
-  }
-
-  await skill.deleteOne();
-
-  res.status(200).json({
-    success: true,
-    message: "Skill deleted successfully",
   });
 });

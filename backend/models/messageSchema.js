@@ -1,4 +1,3 @@
-// backend/models/messageModel.js
 import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema({
@@ -19,7 +18,8 @@ const messageSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
+    expires: 60 * 60 * 24 * 30, // 🧹 auto-delete after 30 days (30 * 24h * 60m * 60s)
   },
 });
 

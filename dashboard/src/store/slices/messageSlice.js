@@ -104,4 +104,7 @@ export const resetMessagesSlice = () => (dispatch) => {
   dispatch(messageSlice.actions.resetMessageSlice());
 };
 
+// ✅ Aliased export for compatibility
+export { getAllMessages as fetchAllMessages };
+
 export default messageSlice.reducer;
