@@ -1,6 +1,9 @@
-import React, { useState, useEffect, useMemo } from "react";
-import ProjectSearch from "../components/ProjectSearch";
-import ProjectCard from "../components/ProjectCard";
+// ✅ ProjectAll.jsx
+import React, { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllProjects } from "@/store/slices/projectSlice";
+import ProjectSearch from "@/components/ProjectSearch";
+import ProjectCard from "@/components/ProjectCard";
 import {
   Select,
   SelectContent,
@@ -17,9 +20,13 @@ import {
   PaginationLink,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
-import { projectsData } from "../data/Protfolio";
 
 const ProjectAll = () => {
+  const dispatch = useDispatch();
+  const { allProjects = [], loading } = useSelector(
+    (state) => state.projects || {}
+  );
+
   const [filterType, setFilterType] = useState("all");
   const [sortOrder, setSortOrder] = useState("latest");
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,8 +34,8 @@ const ProjectAll = () => {
   const projectsPerPage = 6;
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [currentPage]);
+    dispatch(getAllProjects());
+  }, [dispatch]);
 
   const sanitizeString = (str) =>
     String(str)
@@ -46,190 +53,166 @@ const ProjectAll = () => {
   };
 
   const filteredAndSortedProjects = useMemo(() => {
-    const filtered = projectsData
+    return allProjects
       .filter((project) =>
         filterType === "all" ? true : project.type === filterType
       )
       .filter((project) => {
         const searchContent = [
-          project.id,
+          project._id,
           project.name,
-          project.description,
+          project.longDescription,
           ...(project.technologies || []),
         ]
           .map(sanitizeString)
           .join(" ");
         return searchContent.includes(searchTerm);
-      });
-
-    return filtered.sort((a, b) =>
-      sortOrder === "latest"
-        ? new Date(b.createdAt) - new Date(a.createdAt)
-        : new Date(a.createdAt) - new Date(b.createdAt)
-    );
-  }, [filterType, sortOrder, searchTerm]);
+      })
+      .sort((a, b) =>
+        sortOrder === "latest"
+          ? new Date(b.createdAt) - new Date(a.createdAt)
+          : new Date(a.createdAt) - new Date(b.createdAt)
+      );
+  }, [filterType, sortOrder, searchTerm, allProjects]);
 
   const totalPages = Math.ceil(
     filteredAndSortedProjects.length / projectsPerPage
   );
-
-  const indexOfLastProject = currentPage * projectsPerPage;
   const currentProjects = filteredAndSortedProjects.slice(
-    indexOfLastProject - projectsPerPage,
-    indexOfLastProject
+    (currentPage - 1) * projectsPerPage,
+    currentPage * projectsPerPage
   );
 
   const getPaginationPages = () => {
     const pages = [];
-    if (totalPages <= 5) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      if (currentPage <= 3) {
-        pages.push(1, 2, 3, 4, "...", totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        pages.push(
-          1,
-          "...",
-          totalPages - 3,
-          totalPages - 2,
-          totalPages - 1,
-          totalPages
-        );
-      } else {
-        pages.push(
-          1,
-          "...",
-          currentPage - 1,
-          currentPage,
-          currentPage + 1,
-          "...",
-          totalPages
-        );
-      }
-    }
+    if (totalPages <= 5) for (let i = 1; i <= totalPages; i++) pages.push(i);
+    else if (currentPage <= 3) pages.push(1, 2, 3, 4, "...", totalPages);
+    else if (currentPage >= totalPages - 2)
+      pages.push(
+        1,
+        "...",
+        totalPages - 3,
+        totalPages - 2,
+        totalPages - 1,
+        totalPages
+      );
+    else
+      pages.push(
+        1,
+        "...",
+        currentPage - 1,
+        currentPage,
+        currentPage + 1,
+        "...",
+        totalPages
+      );
     return pages;
   };
 
   return (
-    <div className="flex flex-col min-h-screen px-4 max-w-7xl mx-auto dark:bg-gray-950 mt-5 mb-8 text-gray-900 dark:text-gray-100 font-sans">
-      {/* Header */}
+    <div className="min-h-screen px-4 max-w-7xl mx-auto dark:bg-gray-950 mt-5 mb-8 text-gray-900 dark:text-gray-100">
       <header className="text-center mb-8">
-        <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600 dark:from-indigo-400 dark:to-purple-500">
+        <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">
           My Work
         </h1>
-        <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-          Explore a collection of my diverse projects, showcasing my skills in
-          web and app development. Use the filters and search to find what
-          interests you!
+        <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+          Explore a collection of my diverse projects.
         </p>
       </header>
 
-      <main className="flex-1">
-        {/* Search */}
-        <div className="mb-10 mt-5 w-full flex justify-center">
-          <ProjectSearch
-            className="w-full max-w-2xl"
-            searchTerm={searchTerm}
-            onSearch={handleSearch}
-          />
-        </div>
+      <div className="mb-10 mt-5 flex justify-center">
+        <ProjectSearch
+          className="w-full max-w-2xl"
+          searchTerm={searchTerm}
+          onSearch={handleSearch}
+        />
+      </div>
 
-        {/* Filters and Sort */}
-        <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-4 p-4 sm:p-6">
-          <div className="flex flex-wrap justify-center gap-3">
-            {["all", "web", "app"].map((type) => (
-              <button
-                key={type}
-                onClick={() => handleFilter(type)}
-                className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ease-in-out ${
-                  filterType === type
-                    ? "bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transform scale-105"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 border border-transparent dark:border-gray-600"
-                }`}
-              >
-                {type === "all"
-                  ? "All Projects"
-                  : `${type.toUpperCase()} Projects`}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-4">
-            <span className="text-gray-700 dark:text-gray-300 text-md font-medium">
-              Sort by:
-            </span>
-            <Select
-              onValueChange={(value) => setSortOrder(value)}
-              defaultValue={sortOrder}
+      <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-4 p-4">
+        <div className="flex flex-wrap justify-center gap-3">
+          {["all", "web", "app"].map((type) => (
+            <button
+              key={type}
+              onClick={() => handleFilter(type)}
+              className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ease-in-out ${
+                filterType === type
+                  ? "bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transform scale-105"
+                  : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 hover:bg-gray-200"
+              }`}
             >
-              <SelectTrigger className="w-[160px] bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600 rounded-md">
-                <SelectValue placeholder="Sort By" />
-              </SelectTrigger>
-              <SelectContent className="bg-white dark:bg-gray-800">
-                <SelectItem value="latest">Latest</SelectItem>
-                <SelectItem value="oldest">Oldest</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              {type === "all"
+                ? "All Projects"
+                : `${type.toUpperCase()} Projects`}
+            </button>
+          ))}
         </div>
 
-        {/* Projects Grid */}
-        <div className="flex flex-wrap justify-center items-stretch gap-6">
-          {currentProjects.length > 0 ? (
-            currentProjects.map((project) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.333rem)]"
-              />
-            ))
-          ) : (
-            <p className="text-center text-xl text-gray-500 dark:text-gray-400 w-full py-6">
-              No projects found matching your criteria.
-            </p>
-          )}
+        <div className="flex items-center gap-4">
+          <span className="text-md font-medium">Sort by:</span>
+          <Select onValueChange={setSortOrder} defaultValue={sortOrder}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Sort By" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="latest">Latest</SelectItem>
+              <SelectItem value="oldest">Oldest</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
+      </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <Pagination className="mt-12">
-            <PaginationContent className="flex-wrap justify-center gap-1">
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                  disabled={currentPage === 1}
-                />
-              </PaginationItem>
-
-              {getPaginationPages().map((page, index) =>
-                page === "..." ? (
-                  <PaginationItem key={`ellipsis-${index}`}>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                ) : (
-                  <PaginationItem key={page}>
-                    <PaginationLink
-                      isActive={currentPage === page}
-                      onClick={() => setCurrentPage(page)}
-                    >
-                      {page}
-                    </PaginationLink>
-                  </PaginationItem>
-                )
-              )}
-
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() =>
-                    setCurrentPage((p) => Math.min(p + 1, totalPages))
-                  }
-                  disabled={currentPage === totalPages}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+      <div className="flex flex-wrap justify-center gap-6">
+        {loading ? (
+          <p>Loading...</p>
+        ) : currentProjects.length > 0 ? (
+          currentProjects.map((project) => (
+            <ProjectCard key={project._id} project={project} />
+          ))
+        ) : (
+          <p className="text-center text-xl text-gray-500">
+            No projects found.
+          </p>
         )}
-      </main>
+      </div>
+
+      {totalPages > 1 && (
+        <Pagination className="mt-12">
+          <PaginationContent className="flex-wrap justify-center gap-1">
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                disabled={currentPage === 1}
+              />
+            </PaginationItem>
+
+            {getPaginationPages().map((page, index) =>
+              page === "..." ? (
+                <PaginationItem key={index}>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              ) : (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    isActive={currentPage === page}
+                    onClick={() => setCurrentPage(page)}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              )
+            )}
+
+            <PaginationItem>
+              <PaginationNext
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(p + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 };

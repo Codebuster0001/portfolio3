@@ -1,49 +1,71 @@
 // src/pages/Projects.jsx
-import React from "react";
-import { projectsData } from "@/data/Protfolio.js";
+import { SparklesText } from "@/components/magicui/sparkles-text";
 import ProjectCard from "@/components/ProjectCard";
 import { Button } from "@/components/ui/button";
+import { getAllProjects } from "@/store/slices/projectSlice";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { SparklesText } from "@/components/magicui/sparkles-text";
+import { motion } from "framer-motion";
 
 const Projects = () => {
-  const limitedProjects = projectsData.slice(0, 6);
+  const dispatch = useDispatch();
+  const { allProjects, loading } = useSelector((state) => state.projects);
+
+  useEffect(() => {
+    dispatch(getAllProjects());
+  }, [dispatch]);
+
+  const limitedProjects = allProjects.slice(0, 6);
 
   return (
     <section
       id="projects"
-      className="min-h-screen px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24 flex flex-col justify-center items-center"
+      className="min-h-screen px-4 sm:px-8 py-28  text-white"
     >
-      {/* Heading */}
-      <div className="text-center mb-12">
-        <SparklesText className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+      <div className="text-center mb-16">
+        <SparklesText className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight text-white tracking-tight">
           Featured Projects
         </SparklesText>
+        <p className="mt-4 text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">
+          A curated selection of impactful projects highlighting my frontend
+          development capabilities.
+        </p>
       </div>
 
-      {/* Flexbox Cards */}
-      <div className="flex flex-wrap justify-center gap-6 w-full">
-        {limitedProjects.map((project) => (
-          <div
-            key={project.id}
-            className="w-full sm:w-[48%] lg:w-[30%] xl:w-[22%] flex justify-center"
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10 max-w-7xl mx-auto">
+        {loading ? (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{
+              repeat: Infinity,
+              duration: 1,
+              repeatType: "reverse",
+            }}
+            className="col-span-full text-center text-lg text-gray-400"
           >
-            <ProjectCard project={project} />
-          </div>
-        ))}
+            Loading featured projects...
+          </motion.p>
+        ) : (
+          limitedProjects.map((project) => (
+            <ProjectCard key={project._id} project={project} />
+          ))
+        )}
       </div>
 
-      {/* View All Button */}
-      <div className="mt-12 flex justify-center">
-        <Link to="/projects">
-          <Button
-            className="px-6 py-3 text-sm sm:text-base md:text-lg rounded-full"
-            aria-label="View All Projects"
-          >
-            View All Projects
-          </Button>
-        </Link>
-      </div>
+      {!loading && (
+        <div className="mt-20 flex justify-center">
+          <Link to="/projects">
+            <Button className="group px-8 py-6 text-lg font-semibold rounded-full bg-black border border-gray-700 ">
+              View All Projects
+              <span className="ml-2 transition-transform group-hover:translate-x-1">
+                →
+              </span>
+            </Button>
+          </Link>
+        </div>
+      )}
     </section>
   );
 };
