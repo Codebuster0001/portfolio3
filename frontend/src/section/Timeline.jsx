@@ -1,33 +1,10 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
 import { motion, useInView } from "framer-motion";
 import { cn } from "@/lib/utils";
-
 import { SparklesText } from "@/components/magicui/sparkles-text";
-// Timeline data
-const timelineData = [
-  {
-    year: "2021",
-    title: "Started Web Development",
-    description: "Learned HTML, CSS, JavaScript and built mini projects.",
-  },
-  {
-    year: "2022",
-    title: "React & Node.js",
-    description: "Built full-stack apps using MERN stack.",
-  },
-  {
-    year: "2023",
-    title: "Freelancing & Open Source",
-    description: "Worked on real-world apps and contributed to GitHub.",
-  },
-  {
-    year: "2024",
-    title: "Advanced UI & AI Tools",
-    description: "Explored Framer Motion, Shadcn, and AI integrations.",
-  },
-];
 
-// Animations
+// Animation Variants
 const dotVariants = {
   hidden: { scale: 0, opacity: 0 },
   visible: {
@@ -67,6 +44,7 @@ const getCardVariants = (direction = "left") => ({
   },
 });
 
+// Timeline Item Component
 const TimelineItem = ({ item, index }) => {
   const isLeft = index % 2 === 0;
   const direction = isLeft ? "left" : "right";
@@ -78,11 +56,11 @@ const TimelineItem = ({ item, index }) => {
     <div
       ref={ref}
       className={cn(
-        "relative flex flex-col md:flex-row  items-start md:items-center",
+        "relative flex flex-col md:flex-row items-start md:items-center",
         isLeft ? "md:flex-row-reverse" : ""
       )}
     >
-      {/* Dot and line */}
+      {/* Dot and Line */}
       <div
         className={cn(
           "absolute flex flex-col items-center z-10",
@@ -117,7 +95,7 @@ const TimelineItem = ({ item, index }) => {
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
         className={cn(
-          "w-full md:w-1/2 z-10 px-8   md:px-0",
+          "w-full md:w-1/2 z-10 px-8 md:px-0",
           isLeft ? "md:pr-16 md:-mr-10" : "md:pl-16 md:-ml-10"
         )}
       >
@@ -127,20 +105,18 @@ const TimelineItem = ({ item, index }) => {
             "bg-white/80 dark:bg-zinc-900/70 shadow-lg ring-1 ring-black/5 dark:ring-white/10",
             "hover:scale-[1.02] hover:shadow-2xl"
           )}
-          style={{
-            borderColor: isLeft ? "#6366F1" : "#A855F7",
-          }}
+          style={{ borderColor: isLeft ? "#6366F1" : "#A855F7" }}
         >
           <header>
             <time className="block text-xl font-extrabold text-indigo-700 dark:text-indigo-400">
-              {item.year}
+              {item?.year}
             </time>
             <h3 className="text-lg font-semibold mt-1 text-slate-800 dark:text-slate-200">
-              {item.title}
+              {item?.title}
             </h3>
           </header>
           <p className="text-sm text-muted-foreground mt-3 leading-relaxed tracking-wide">
-            {item.description}
+            {item?.description}
           </p>
         </article>
       </motion.div>
@@ -148,7 +124,29 @@ const TimelineItem = ({ item, index }) => {
   );
 };
 
+// Main Timeline Section
 const Timeline = () => {
+  const [timelineData, setTimelineData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getTimeline = async () => {
+      try {
+        const { data } = await axios.get(
+          "http://localhost:5000/api/v1/timeline/getall",
+          { withCredentials: true }
+        );
+        // ✅ Fix here:
+        setTimelineData(data.timeline || []);
+      } catch (error) {
+        console.error("Timeline fetch failed", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getTimeline();
+  }, []);
+  
   return (
     <section
       id="timeline"
@@ -169,11 +167,15 @@ const Timeline = () => {
         </div>
 
         {/* Timeline items */}
-        <div className="space-y-24 sm:space-y-28 md:space-y-32">
-          {timelineData.map((item, index) => (
-            <TimelineItem key={index} item={item} index={index} />
-          ))}
-        </div>
+        {loading ? (
+          <p className="text-center text-gray-400">Loading timeline...</p>
+        ) : (
+          <div className="space-y-24 sm:space-y-28 md:space-y-32">
+            {timelineData.map((item, index) => (
+              <TimelineItem key={item._id || index} item={item} index={index} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

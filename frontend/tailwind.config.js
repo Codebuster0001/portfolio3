@@ -2,6 +2,16 @@
 export default {
   darkMode: ["class"],
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  safelist: [
+    'text-cyan-400',
+    'text-orange-500',
+    'text-blue-500',
+    'text-yellow-400',
+    'text-green-500',
+    'text-green-600',
+    'text-purple-500',
+    'text-cyan-300',
+  ],
   theme: {
     extend: {
       borderRadius: {
@@ -54,6 +64,6 @@ export default {
     },
   },
   plugins: [
-    require("tailwindcss-animate"), // ✅ Added here
+    require("tailwindcss-animate"),
   ],
 };

@@ -1,23 +1,19 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useLocation, Link } from "react-router-dom";
-
-import { login, clearAllUserErrors } from "@/store/slices/userSlice";
+import { Link, useNavigate } from "react-router-dom";
+import loginGif from "@/assets/login2.gif";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { clearAllUserErrors, login } from "@/store/slices/userSlice";
 import { toast } from "sonner";
-import { Eye, EyeOff } from "lucide-react";
-import loginGif from "../assets/login2.gif";
 
 const Login = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const location = useLocation(); // 🟢 get current route
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { loading, isAuthenticated, error } = useSelector(
     (state) => state.user
@@ -25,7 +21,7 @@ const Login = () => {
 
   const handleLogin = () => {
     if (!email || !password) {
-      toast.error("Please enter email and password");
+      toast.error("Provide Email and Password!");
       return;
     }
     dispatch(login(email, password));
@@ -37,12 +33,10 @@ const Login = () => {
       dispatch(clearAllUserErrors());
     }
 
-    // ✅ only show toast if coming from login page
-    if (isAuthenticated && location.pathname === "/login") {
-      toast.success("Login successful");
-      navigate("/");
+    if (isAuthenticated) {
+      navigate("/dashboard", { replace: true }); // ✅ Always go to dashboard after login
     }
-  }, [error, isAuthenticated, dispatch, navigate, location.pathname]);
+  }, [isAuthenticated, error, dispatch, navigate]);
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
@@ -69,37 +63,23 @@ const Login = () => {
                 />
               </div>
 
-              <div className="grid gap-2 relative">
+              <div className="grid gap-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Password</Label>
-                  <Link
-                    to="/password/forgot"
-                    className="text-sm text-muted-foreground underline hover:text-primary"
-                  >
+                  <Link to="/password/forgot" className="text-sm underline">
                     Forgot password?
                   </Link>
                 </div>
                 <Input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute right-3 top-[42px] text-gray-500"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
               </div>
 
-              <Button
-                onClick={handleLogin}
-                className="w-full"
-                disabled={loading}
-              >
+              <Button onClick={handleLogin} disabled={loading}>
                 {loading ? "Logging in..." : "Login"}
               </Button>
             </div>
@@ -111,7 +91,7 @@ const Login = () => {
         <img
           src={loginGif}
           alt="Login Illustration"
-          className="w-3/4 object-cover h-auto"
+          className="w-3/4 h-auto object-cover"
         />
       </div>
     </div>

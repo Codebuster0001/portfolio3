@@ -1,25 +1,43 @@
-import React from "react";
 import { BoxReveal } from "@/components/magicui/box-reveal";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { useTypewriter } from "react-simple-typewriter";
 
 const Hero = () => {
+  const [user, setUser] = useState({}); // ✅ ensures no null errors
+
   const [text] = useTypewriter({
-    words: ["Deepak Kushwaha"],
+    words: user?.fullName ? [user.fullName] : ["Your Name"], // ✅ safe access
     loop: true,
     delaySpeed: 2000,
   });
 
+  const getMyProfile = async () => {
+    try {
+      const { data } = await axios.get(
+        "http://localhost:5000/api/v1/user/portfolio/me",
+        { withCredentials: true }
+      );
+      setUser(data.user);
+    } catch (error) {
+      console.error("Failed to load profile:", error);
+    }
+  };
+
+  useEffect(() => {
+    getMyProfile();
+  }, []);
   return (
     <section
       id="/"
       className="relative overflow-hidden min-h-screen flex items-center justify-center bg-black text-white px-6 md:px-12"
     >
-      {/* Layer 2: Floating blobs */}
+      {/* Floating Blobs */}
       <div className="absolute top-[-15%] left-[-15%] w-96 h-96 bg-gradient-to-br from-blue-600 to-purple-600 opacity-30 rounded-full animate-blob" />
       <div className="absolute bottom-[-15%] right-[-15%] w-[40rem] h-[40rem] bg-gradient-to-tr from-pink-600 to-red-500 opacity-30 rounded-full animate-blob-s" />
 
-      {/* Layer 3: Twinkling stars */}
+      {/* Twinkling Stars */}
       {Array.from({ length: 50 }).map((_, i) => (
         <div
           key={i}
@@ -34,7 +52,7 @@ const Hero = () => {
         />
       ))}
 
-      {/* Content */}
+      {/* Hero Content */}
       <div className="relative z-10 container mx-auto flex flex-col items-center text-center gap-5">
         <BoxReveal>
           <h1 className="text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight text-indigo-400">
@@ -43,7 +61,6 @@ const Hero = () => {
         </BoxReveal>
 
         <div className="flex items-center h-[9rem] md:h-[10rem] md:pb-10 md:pt-5 lg:h-[8rem] justify-center gap-3 text-7xl md:text-8xl lg:text-9xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">
-         
           {text}
         </div>
 
@@ -64,13 +81,17 @@ const Hero = () => {
             variant="outline"
             className="text-lg px-8 py-4 text-black shadow-xl transform hover:scale-105 transition"
           >
-            <a href="#resume">Resume</a>
+            <a
+              href={user.resume?.url || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Resume
+            </a>
           </Button>
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      
     </section>
   );
 };

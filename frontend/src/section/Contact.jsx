@@ -4,9 +4,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-
 const Contact = () => {
- 
   return (
     <section
       id="contact"
@@ -27,7 +25,7 @@ const Contact = () => {
           <Card className="bg-neutral-900 border border-gray-700 text-white shadow-2xl">
             <CardHeader className="pb-0" />
             <CardContent className="space-y-5">
-              <form className="space-y-5" onSubmit={handleSubmit}>
+              <form className="space-y-5" >
                 <div className="space-y-2">
                   <label
                     htmlFor="name"
@@ -38,8 +36,7 @@ const Contact = () => {
                   <Input
                     id="name"
                     type="text"
-                    value={formData.name}
-                    onChange={handleChange}
+                    
                     placeholder="John Doe"
                     className="bg-gray-800 text-white"
                     required
@@ -56,8 +53,7 @@ const Contact = () => {
                   <Input
                     id="email"
                     type="email"
-                    value={formData.email}
-                    onChange={handleChange}
+                   
                     placeholder="john@example.com"
                     className="bg-gray-800 text-white"
                     required
@@ -73,8 +69,7 @@ const Contact = () => {
                   </label>
                   <Textarea
                     id="message"
-                    value={formData.message}
-                    onChange={handleChange}
+                    
                     rows={5}
                     placeholder="Your message..."
                     className="bg-gray-800 text-white"
@@ -85,9 +80,9 @@ const Contact = () => {
                 <Button
                   type="submit"
                   className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
-                  disabled={loading}
+                
                 >
-                  {loading ? "Sending..." : "Send Message"}
+                 Send Message
                 </Button>
               </form>
             </CardContent>

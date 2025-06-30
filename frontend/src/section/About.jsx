@@ -1,11 +1,30 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import ModelViewer from "@/components/ModelViewer";
 import characterModel from "@/assets/Animation_Boxing_Practice_withSkin.fbx";
 import { SparklesText } from "@/components/magicui/sparkles-text";
 import { FaGithub, FaLinkedin, FaInstagram } from "react-icons/fa";
+import axios from "axios";
 
 const About = () => {
+  const [user, setUser] = useState({});
+
+  const getMyProfile = async () => {
+    try {
+      const { data } = await axios.get(
+        "http://localhost:5000/api/v1/user/portfolio/me",
+        { withCredentials: true }
+      );
+      setUser(data.user);
+    } catch (error) {
+      console.error("Failed to load profile:", error);
+    }
+  };
+
+  useEffect(() => {
+    getMyProfile();
+  }, []);
+
   return (
     <section
       id="about"
@@ -18,50 +37,59 @@ const About = () => {
             About Me
           </SparklesText>
           <p className="text-xl md:text-2xl text-gray-300 leading-relaxed">
-            I'm{" "}
-            <span className="text-white font-semibold">Deepak Kushwaha</span>, a
-            passionate{" "}
-            <span className="text-indigo-400 font-semibold">
-              Frontend Developer
-            </span>{" "}
-            crafting immersive web experiences using modern technologies like{" "}
-            <span className="text-indigo-400 font-medium">React</span>,{" "}
-            <span className="text-indigo-400 font-medium">TailwindCSS</span>,{" "}
-            <span className="text-indigo-400 font-medium">Framer Motion</span>.
-            I focus on clean design and efficient performance.
+             I'm Frontend Developer
+            {user?.description ||
+              "I'm a frontend developer passionate about building UI experiences."}{" "}
+           
+            <span className="text-indigo-400 font-medium">
+              {user?.technologies?.slice(0, 3).join(", ") ||
+                "React, TailwindCSS, Framer Motion"}
+            </span>
+            . I focus on{" "}
+            <span className="text-white font-semibold">clean design</span> and{" "}
+            <span className="text-white font-semibold">
+              efficient performance
+            </span>
+            .
           </p>
 
           {/* Social Icons */}
           <div className="flex justify-center md:justify-start gap-6 pt-4">
-            <a
-              href="https://github.com/deepakkushwahadev"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white text-3xl hover:text-gray-400 transition-colors duration-300"
-            >
-              <FaGithub />
-            </a>
-            <a
-              href="https://linkedin.com/in/deepakkushwahadev"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white text-3xl hover:text-[#0077b5] transition-colors duration-300"
-            >
-              <FaLinkedin />
-            </a>
-            <a
-              href="https://instagram.com/deepakkushwahadev"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white text-3xl hover:text-pink-500 transition-colors duration-300"
-            >
-              <FaInstagram />
-            </a>
+            {user?.githubURL && (
+              <a
+                href={user.githubURL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white text-3xl hover:text-gray-400 transition-colors duration-300"
+              >
+                <FaGithub />
+              </a>
+            )}
+            {user?.linkedInURL && (
+              <a
+                href={user.linkedInURL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white text-3xl hover:text-[#0077b5] transition-colors duration-300"
+              >
+                <FaLinkedin />
+              </a>
+            )}
+            {user?.instagramURL && (
+              <a
+                href={user.instagramURL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white text-3xl hover:text-pink-500 transition-colors duration-300"
+              >
+                <FaInstagram />
+              </a>
+            )}
           </div>
         </div>
 
         {/* 3D Model Canvas */}
-        <div className="w-full z-50  h-[600px]  px-4">
+        <div className="w-full z-50 h-[600px] px-4">
           <Canvas camera={{ position: [0, 1.4, 3], fov: 30 }}>
             <Suspense fallback={null}>
               <ModelViewer modelPath={characterModel} />

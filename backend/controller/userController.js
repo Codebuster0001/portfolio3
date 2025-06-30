@@ -228,7 +228,7 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
 
 // Get Public Portfolio User
 export const getUserForPortfolio = catchAsyncErrors(async (req, res) => {
-  const id = "685e251ca73b41b423413715"; // Update this as needed
+  const id = "68611f69ceccc56a133576b5"; // Update this as needed
   const user = await User.findById(id);
   res.status(200).json({ success: true, user });
 });

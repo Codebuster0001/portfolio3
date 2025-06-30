@@ -1,21 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Initial state
+// Initial State
 const initialState = {
   loading: false,
   user: {},
   isAuthenticated: false,
+  isUserLoaded: false,
+  isUpdated: false,
   error: null,
   message: null,
-  isUpdated: false,
 };
 
+// Slice
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // ---------------- AUTH ----------------
+    // ---------------- LOGIN ----------------
     loginRequest: (state) => {
       state.loading = true;
       state.isAuthenticated = false;
@@ -35,6 +37,7 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
+    // ---------------- LOGOUT ----------------
     logoutSuccess: (state, action) => {
       state.loading = false;
       state.isAuthenticated = false;
@@ -59,12 +62,14 @@ const userSlice = createSlice({
       state.isAuthenticated = true;
       state.user = action.payload;
       state.error = null;
+      state.isUserLoaded = true;
     },
     loadUserFailed: (state, action) => {
       state.loading = false;
       state.isAuthenticated = false;
       state.user = {};
       state.error = action.payload;
+      state.isUserLoaded = true;
     },
 
     // ---------------- UPDATE PASSWORD ----------------
@@ -78,7 +83,6 @@ const userSlice = createSlice({
       state.loading = false;
       state.isUpdated = true;
       state.message = action.payload;
-      state.error = null;
     },
     updatePasswordFailed: (state, action) => {
       state.loading = false;
@@ -98,7 +102,6 @@ const userSlice = createSlice({
       state.loading = false;
       state.isUpdated = true;
       state.message = action.payload;
-      state.error = null;
     },
     updateProfileFailed: (state, action) => {
       state.loading = false;
@@ -107,11 +110,11 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
-    // ---------------- RESET / CLEAR ----------------
+    // ---------------- RESET/CLEAR ----------------
     resetUpdateState: (state) => {
-      state.error = null;
       state.isUpdated = false;
       state.message = null;
+      state.error = null;
     },
     clearErrors: (state) => {
       state.error = null;
@@ -119,10 +122,11 @@ const userSlice = createSlice({
     clearMessage: (state) => {
       state.message = null;
     },
+    resetUserState: () => initialState,
   },
 });
 
-// Export actions
+// Export Actions
 export const {
   loginRequest,
   loginSuccess,
@@ -141,11 +145,14 @@ export const {
   resetUpdateState,
   clearErrors,
   clearMessage,
+  resetUserState,
 } = userSlice.actions;
 
-// ---------------- THUNKS ----------------
+// Export Reducer
+export default userSlice.reducer;
 
-// Login
+// ---------------- ASYNC THUNKS ----------------
+
 export const login = (email, password) => async (dispatch) => {
   dispatch(loginRequest());
   try {
@@ -159,15 +166,10 @@ export const login = (email, password) => async (dispatch) => {
     );
     dispatch(loginSuccess(data.user));
   } catch (error) {
-    dispatch(
-      loginFailed(
-        error.response?.data?.message || error.message || "Login failed"
-      )
-    );
+    dispatch(loginFailed(error.response?.data?.message || "Login failed"));
   }
 };
 
-// Get Logged-in User
 export const getUser = () => async (dispatch) => {
   dispatch(loadUserRequest());
   try {
@@ -176,11 +178,12 @@ export const getUser = () => async (dispatch) => {
     });
     dispatch(loadUserSuccess(data.user));
   } catch (error) {
-    dispatch(loadUserFailed(error.response?.data?.message || error.message));
+    dispatch(
+      loadUserFailed(error.response?.data?.message || "Failed to load user")
+    );
   }
 };
 
-// Logout
 export const logout = () => async (dispatch) => {
   try {
     const { data } = await axios.get(
@@ -191,11 +194,10 @@ export const logout = () => async (dispatch) => {
     );
     dispatch(logoutSuccess(data.message));
   } catch (error) {
-    dispatch(logoutFailed(error.response?.data?.message || error.message));
+    dispatch(logoutFailed(error.response?.data?.message || "Logout failed"));
   }
 };
 
-// Update Password
 export const updatePassword =
   (currentPassword, newPassword, confirmNewPassword) => async (dispatch) => {
     dispatch(updatePasswordRequest());
@@ -211,12 +213,13 @@ export const updatePassword =
       dispatch(updatePasswordSuccess(data.message));
     } catch (error) {
       dispatch(
-        updatePasswordFailed(error.response?.data?.message || error.message)
+        updatePasswordFailed(
+          error.response?.data?.message || "Update password failed"
+        )
       );
     }
   };
 
-// Update Profile
 export const updateProfile = (formData) => async (dispatch) => {
   dispatch(updateProfileRequest());
   try {
@@ -231,12 +234,15 @@ export const updateProfile = (formData) => async (dispatch) => {
     dispatch(updateProfileSuccess(data.message));
   } catch (error) {
     dispatch(
-      updateProfileFailed(error.response?.data?.message || error.message)
+      updateProfileFailed(
+        error.response?.data?.message || "Profile update failed"
+      )
     );
   }
 };
 
-// Helpers
+// ---------------- HELPERS ----------------
+
 export const resetProfile = () => (dispatch) => {
   dispatch(resetUpdateState());
   dispatch(clearMessage());
@@ -245,5 +251,3 @@ export const resetProfile = () => (dispatch) => {
 export const clearAllUserErrors = () => (dispatch) => {
   dispatch(clearErrors());
 };
-
-export default userSlice.reducer;
