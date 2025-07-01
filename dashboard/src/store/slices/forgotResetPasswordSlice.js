@@ -53,7 +53,7 @@ export const forgotPassword = (email) => async (dispatch) => {
     dispatch(forgotResetPasswordSlice.actions.forgotPasswordRequest());
 
     const response = await axios.post(
-      "http://localhost:5000/api/v1/user/forgot/password",
+      "https://portfolio-1dkv.onrender.com/api/v1/user/forgot/password",
       { email },
       {
         withCredentials: true,
@@ -81,7 +81,7 @@ export const resetPassword =
       dispatch(forgotResetPasswordSlice.actions.resetPasswordRequest());
 
       const response = await axios.put(
-        `http://localhost:5000/api/v1/user/password/reset/${token}`,
+        `https://portfolio-1dkv.onrender.com/api/v1/user/password/reset/${token}`,
         { password, confirmPassword },
         {
           withCredentials: true,

@@ -101,7 +101,7 @@ export const getAllProjects = () => async (dispatch) => {
   dispatch(projectSlice.actions.getAllProjectsRequest());
   try {
     const { data } = await axios.get(
-      "http://localhost:5000/api/v1/projects/getall",
+      "https://portfolio-1dkv.onrender.com/api/v1/projects/getall",
       {
         withCredentials: true,
       }
@@ -123,7 +123,7 @@ export const fetchProjectById = (id) => async (dispatch) => {
   dispatch(projectSlice.actions.getSingleProjectRequest());
   try {
     const { data } = await axios.get(
-      `http://localhost:5000/api/v1/projects/${id}`,
+      `https://portfolio-1dkv.onrender.com/api/v1/projects/${id}`,
       {
         withCredentials: true,
       }
@@ -145,7 +145,7 @@ export const addNewProject = (formData) => async (dispatch) => {
   dispatch(projectSlice.actions.addNewProjectRequest());
   try {
     const { data } = await axios.post(
-      "http://localhost:5000/api/v1/projects/add",
+      "https://portfolio-1dkv.onrender.com/api/v1/projects/add",
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" },
@@ -169,7 +169,7 @@ export const updateProject = (id, formData) => async (dispatch) => {
   dispatch(projectSlice.actions.updateProjectRequest());
   try {
     const { data } = await axios.put(
-      `http://localhost:5000/api/v1/projects/update/${id}`,
+      `https://portfolio-1dkv.onrender.com/api/v1/projects/update/${id}`,
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" },
@@ -193,7 +193,7 @@ export const deleteProject = (id) => async (dispatch) => {
   dispatch(projectSlice.actions.deleteProjectRequest());
   try {
     const { data } = await axios.delete(
-      `http://localhost:5000/api/v1/projects/delete/${id}`,
+      `https://portfolio-1dkv.onrender.com/api/v1/projects/delete/${id}`,
       { withCredentials: true }
     );
     dispatch(projectSlice.actions.deleteProjectSuccess(data.message));

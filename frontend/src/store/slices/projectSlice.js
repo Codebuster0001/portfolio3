@@ -1,5 +1,5 @@
 // src/store/slices/projectSlice.js
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // Get all projects
@@ -8,7 +8,7 @@ export const getAllProjects = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const { data } = await axios.get(
-        "http://localhost:5000/api/v1/projects/getall"
+        "https://portfolio-1dkv.onrender.com/api/v1/projects/getall"
       );
       return data.projects;
     } catch (error) {
@@ -25,7 +25,7 @@ export const getProjectById = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/v1/projects/${id}`
+        `https://portfolio-1dkv.onrender.com/api/v1/projects/${id}`
       );
       return data.project;
     } catch (error) {

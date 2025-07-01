@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   addNewProject,
-  updateProject,
   getAllProjects,
+  updateProject,
 } from "@/store/slices/projectSlice";
-import { useNavigate, useParams } from "react-router-dom";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const AddProject = () => {
   const { id } = useParams();
@@ -39,7 +39,7 @@ const AddProject = () => {
   useEffect(() => {
     if (isEditMode) {
       axios
-        .get(`http://localhost:5000/api/v1/projects/${id}`, {
+        .get(`https://portfolio-1dkv.onrender.com/api/v1/projects/${id}`, {
           withCredentials: true,
         })
         .then((res) => {

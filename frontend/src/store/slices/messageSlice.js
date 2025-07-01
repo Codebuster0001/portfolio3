@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // Async thunk to send contact form message with timeout
@@ -7,7 +7,7 @@ export const sendContactMessage = createAsyncThunk(
   async ({ name, email, message }, thunkAPI) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/v1/message/contact",
+        "https://portfolio-1dkv.onrender.com/api/v1/message/contact",
         { name, email, message },
         {
           timeout: 7000, // optional timeout

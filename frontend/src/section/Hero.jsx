@@ -16,7 +16,7 @@ const Hero = () => {
   const getMyProfile = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:5000/api/v1/user/portfolio/me",
+        "https://portfolio-1dkv.onrender.com/api/v1/user/portfolio/me",
         { withCredentials: true }
       );
       setUser(data.user);
@@ -91,7 +91,6 @@ const Hero = () => {
           </Button>
         </div>
       </div>
-
     </section>
   );
 };

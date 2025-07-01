@@ -60,7 +60,7 @@ export const getAllSkills = () => async (dispatch) => {
   dispatch(requestStart());
   try {
     const { data } = await axios.get(
-      "http://localhost:5000/api/v1/skills/getall"
+      "https://portfolio-1dkv.onrender.com/api/v1/skills/getall"
     );
     dispatch(getSkillsSuccess(data.skills));
   } catch (err) {
@@ -73,7 +73,7 @@ export const addSkill = (formData) => async (dispatch) => {
   dispatch(requestStart());
   try {
     const { data } = await axios.post(
-      "http://localhost:5000/api/v1/skills/add",
+      "https://portfolio-1dkv.onrender.com/api/v1/skills/add",
       formData,
       axiosConfig
     );
@@ -90,7 +90,7 @@ export const deleteSkill = (order) => async (dispatch) => {
   dispatch(requestStart());
   try {
     const { data } = await axios.delete(
-      `http://localhost:5000/api/v1/skills/delete/${order}`,
+      `https://portfolio-1dkv.onrender.com/api/v1/skills/delete/${order}`,
       axiosConfig
     );
     dispatch(requestSuccess(data.message));

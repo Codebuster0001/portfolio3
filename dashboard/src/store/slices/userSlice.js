@@ -17,7 +17,7 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // ---------------- LOGIN ----------------
+    // LOGIN
     loginRequest: (state) => {
       state.loading = true;
       state.isAuthenticated = false;
@@ -37,7 +37,7 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
-    // ---------------- LOGOUT ----------------
+    // LOGOUT
     logoutSuccess: (state, action) => {
       state.loading = false;
       state.isAuthenticated = false;
@@ -50,7 +50,7 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
-    // ---------------- LOAD USER ----------------
+    // LOAD USER
     loadUserRequest: (state) => {
       state.loading = true;
       state.isAuthenticated = false;
@@ -72,7 +72,7 @@ const userSlice = createSlice({
       state.isUserLoaded = true;
     },
 
-    // ---------------- UPDATE PASSWORD ----------------
+    // UPDATE PASSWORD
     updatePasswordRequest: (state) => {
       state.loading = true;
       state.isUpdated = false;
@@ -91,7 +91,7 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
-    // ---------------- UPDATE PROFILE ----------------
+    // UPDATE PROFILE
     updateProfileRequest: (state) => {
       state.loading = true;
       state.isUpdated = false;
@@ -110,7 +110,7 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
-    // ---------------- RESET/CLEAR ----------------
+    // RESET / CLEAR
     resetUpdateState: (state) => {
       state.isUpdated = false;
       state.message = null;
@@ -153,29 +153,37 @@ export default userSlice.reducer;
 
 // ---------------- ASYNC THUNKS ----------------
 
+// LOGIN
 export const login = (email, password) => async (dispatch) => {
   dispatch(loginRequest());
   try {
     const { data } = await axios.post(
-      "http://localhost:5000/api/v1/user/login",
+      "https://portfolio-1dkv.onrender.com/api/v1/user/login",
       { email, password },
       {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
       }
     );
+
+    console.log("LOGIN SUCCESS:", data);
     dispatch(loginSuccess(data.user));
   } catch (error) {
+    console.error("LOGIN FAILED:", error.response?.data || error.message);
     dispatch(loginFailed(error.response?.data?.message || "Login failed"));
   }
 };
 
+// GET USER
 export const getUser = () => async (dispatch) => {
   dispatch(loadUserRequest());
   try {
-    const { data } = await axios.get("http://localhost:5000/api/v1/user/me", {
-      withCredentials: true,
-    });
+    const { data } = await axios.get(
+      "https://portfolio-1dkv.onrender.com/api/v1/user/me",
+      {
+        withCredentials: true,
+      }
+    );
     dispatch(loadUserSuccess(data.user));
   } catch (error) {
     dispatch(
@@ -184,10 +192,11 @@ export const getUser = () => async (dispatch) => {
   }
 };
 
+// LOGOUT
 export const logout = () => async (dispatch) => {
   try {
     const { data } = await axios.get(
-      "http://localhost:5000/api/v1/user/logout",
+      "https://portfolio-1dkv.onrender.com/api/v1/user/logout",
       {
         withCredentials: true,
       }
@@ -198,12 +207,13 @@ export const logout = () => async (dispatch) => {
   }
 };
 
+// UPDATE PASSWORD
 export const updatePassword =
   (currentPassword, newPassword, confirmNewPassword) => async (dispatch) => {
     dispatch(updatePasswordRequest());
     try {
       const { data } = await axios.put(
-        "http://localhost:5000/api/v1/user/update/password",
+        "https://portfolio-1dkv.onrender.com/api/v1/user/update/password",
         { currentPassword, newPassword, confirmNewPassword },
         {
           withCredentials: true,
@@ -220,11 +230,12 @@ export const updatePassword =
     }
   };
 
+// UPDATE PROFILE
 export const updateProfile = (formData) => async (dispatch) => {
   dispatch(updateProfileRequest());
   try {
     const { data } = await axios.put(
-      "http://localhost:5000/api/v1/user/me/profile/update",
+      "https://portfolio-1dkv.onrender.com/api/v1/user/me/profile/update",
       formData,
       {
         withCredentials: true,

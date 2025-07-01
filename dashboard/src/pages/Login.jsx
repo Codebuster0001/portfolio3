@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import loginGif from "@/assets/login2.gif";
+
+import loginGif from "@/assets/login2.gif"; // Make sure this is a valid image (GIF/PNG/JPG)
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,12 +35,13 @@ const Login = () => {
     }
 
     if (isAuthenticated) {
-      navigate("/dashboard", { replace: true }); // ✅ Always go to dashboard after login
+      navigate("/dashboard", { replace: true });
     }
   }, [isAuthenticated, error, dispatch, navigate]);
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
+      {/* Form Section */}
       <div className="min-h-screen flex items-center justify-center px-6 py-12">
         <div className="border border-gray-200 rounded-md p-8 w-full max-w-md">
           <div className="grid gap-6">
@@ -56,7 +58,7 @@ const Login = () => {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -73,6 +75,7 @@ const Login = () => {
                 <Input
                   id="password"
                   type="password"
+                  placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -87,6 +90,7 @@ const Login = () => {
         </div>
       </div>
 
+      {/* Image Section */}
       <div className="hidden lg:flex items-center justify-center bg-muted">
         <img
           src={loginGif}

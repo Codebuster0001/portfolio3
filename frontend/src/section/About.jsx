@@ -1,10 +1,10 @@
-import React, { Suspense, useEffect, useState } from "react";
-import { Canvas } from "@react-three/fiber";
-import ModelViewer from "@/components/ModelViewer";
 import characterModel from "@/assets/Animation_Boxing_Practice_withSkin.fbx";
 import { SparklesText } from "@/components/magicui/sparkles-text";
-import { FaGithub, FaLinkedin, FaInstagram } from "react-icons/fa";
+import ModelViewer from "@/components/ModelViewer";
+import { Canvas } from "@react-three/fiber";
 import axios from "axios";
+import { Suspense, useEffect, useState } from "react";
+import { FaGithub, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 const About = () => {
   const [user, setUser] = useState({});
@@ -12,7 +12,7 @@ const About = () => {
   const getMyProfile = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:5000/api/v1/user/portfolio/me",
+        "https://portfolio-1dkv.onrender.com/api/v1/user/portfolio/me",
         { withCredentials: true }
       );
       setUser(data.user);
@@ -37,10 +37,9 @@ const About = () => {
             About Me
           </SparklesText>
           <p className="text-xl md:text-2xl text-gray-300 leading-relaxed">
-             I'm Frontend Developer
+            I'm Frontend Developer
             {user?.description ||
               "I'm a frontend developer passionate about building UI experiences."}{" "}
-           
             <span className="text-indigo-400 font-medium">
               {user?.technologies?.slice(0, 3).join(", ") ||
                 "React, TailwindCSS, Framer Motion"}

@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import { SparklesText } from "@/components/magicui/sparkles-text";
+import { cn } from "@/lib/utils";
 import axios from "axios";
 import { motion, useInView } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { SparklesText } from "@/components/magicui/sparkles-text";
+import { useEffect, useRef, useState } from "react";
 
 // Animation Variants
 const dotVariants = {
@@ -133,7 +133,7 @@ const Timeline = () => {
     const getTimeline = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:5000/api/v1/timeline/getall",
+          "https://portfolio-1dkv.onrender.com/api/v1/timeline/getall",
           { withCredentials: true }
         );
         // ✅ Fix here:
@@ -146,7 +146,7 @@ const Timeline = () => {
     };
     getTimeline();
   }, []);
-  
+
   return (
     <section
       id="timeline"

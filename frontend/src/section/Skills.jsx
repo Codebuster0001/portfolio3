@@ -49,7 +49,7 @@ const Skills = ({ speedFactor = 1 }) => {
   const fetchSkills = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:5000/api/v1/skills/getall"
+        "https://portfolio-1dkv.onrender.com/api/v1/skills/getall"
       );
       const parsed = data.skills
         .map((skill) => ({

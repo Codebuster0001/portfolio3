@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { FaGithub, FaLinkedin, FaInstagram } from "react-icons/fa";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { FaGithub, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 const Footer = () => {
   const [user, setUser] = useState({});
@@ -8,7 +8,7 @@ const Footer = () => {
   const getMyFooter = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:5000/api/v1/user/portfolio/me",
+        "https://portfolio-1dkv.onrender.com/api/v1/user/portfolio/me",
         { withCredentials: true }
       );
       setUser(data.user);

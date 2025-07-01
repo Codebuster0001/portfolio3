@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
-import { FaEdit, FaLock, FaUser } from "react-icons/fa";
+import FaUser from 'react-icons/fa/FaUser'; // ✅ Correct usage
+
+import  FaLock  from "react-icons/fa/FaLock";
+import  FaEdit  from "react-icons/fa/FaEdit";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 

@@ -57,7 +57,7 @@ export const getAllTimelines = () => async (dispatch) => {
   try {
     dispatch(timelineSlice.actions.request());
     const { data } = await axios.get(
-      "http://localhost:5000/api/v1/timeline/getall"
+      "https://portfolio-1dkv.onrender.com/api/v1/timeline/getall"
     );
     dispatch(timelineSlice.actions.getAllSuccess(data.timeline));
   } catch (err) {
@@ -71,7 +71,7 @@ export const createTimeline = (timelineData) => async (dispatch) => {
   try {
     dispatch(timelineSlice.actions.request());
     const { data } = await axios.post(
-      "http://localhost:5000/api/v1/timeline/create",
+      "https://portfolio-1dkv.onrender.com/api/v1/timeline/create",
       timelineData,
       {
         withCredentials: true,
@@ -90,7 +90,7 @@ export const deleteTimeline = (id) => async (dispatch) => {
   try {
     dispatch(timelineSlice.actions.request());
     const { data } = await axios.delete(
-      `http://localhost:5000/api/v1/timeline/delete/${id}`,
+      `https://portfolio-1dkv.onrender.com/api/v1/timeline/delete/${id}`,
       { withCredentials: true }
     );
     dispatch(
@@ -107,7 +107,7 @@ export const updateTimeline = (id, timelineData) => async (dispatch) => {
   try {
     dispatch(timelineSlice.actions.request());
     const { data } = await axios.put(
-      `http://localhost:5000/api/v1/timeline/update/${id}`,
+      `https://portfolio-1dkv.onrender.com/api/v1/timeline/update/${id}`,
       timelineData,
       {
         withCredentials: true,
