@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { FaUser, FaLock, FaEdit } from "react-icons/fa"; // ✅ Recommended
-
+import { FaUser, FaLock, FaEdit } from "react-icons/fa";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 
@@ -10,7 +9,7 @@ const Account = () => {
   const navigate = useNavigate();
 
   const menuItems = [
-    { label: " Profile", path: "/dashboard/about/profile", icon: <FaUser /> },
+    { label: "Profile", path: "/dashboard/about/profile", icon: <FaUser /> },
     {
       label: "Update Profile",
       path: "/dashboard/about/update-profile",
@@ -32,8 +31,8 @@ const Account = () => {
   }, [location.pathname, navigate]);
 
   return (
-    <div className="flex h-screen overflow-hidden relative ">
-      {/* Sidebar Overlay on Mobile */}
+    <div className="flex h-screen overflow-hidden relative">
+      {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/30 z-10 backdrop-blur-sm md:hidden"
@@ -57,6 +56,8 @@ const Account = () => {
               <X className="w-5 h-5 text-zinc-600 dark:text-zinc-300" />
             </button>
           </div>
+
+          {/* Navigation Menu */}
           <nav className="flex flex-col gap-2">
             {menuItems.map((item) => (
               <NavLink
@@ -79,7 +80,7 @@ const Account = () => {
         </div>
       </aside>
 
-      {/* Mobile Toggle */}
+      {/* Mobile Menu Button */}
       <button
         className="md:hidden fixed top-4 left-4 z-30 bg-background p-2 rounded-lg border shadow"
         onClick={() => setIsSidebarOpen(true)}
@@ -100,7 +101,7 @@ const Account = () => {
             </p>
           </div>
 
-          {/* Content */}
+          {/* Page Content */}
           <section className="bg-card border border-border rounded-2xl shadow-md p-6 transition-all">
             <Outlet />
           </section>
