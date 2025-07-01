@@ -1,193 +1,154 @@
-import { createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axiosInstance from "@/lib/axiosInstance";
 
+// ✅ Thunks
+export const getAllProjects = createAsyncThunk(
+  "projects/getAll",
+  async (_, thunkAPI) => {
+    try {
+      const { data } = await axiosInstance.get("/api/v1/projects/getall");
+      return data.projects;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const fetchProjectById = createAsyncThunk(
+  "projects/fetchById",
+  async (id, thunkAPI) => {
+    try {
+      const { data } = await axiosInstance.get(`/api/v1/projects/${id}`);
+      return data.project;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const addNewProject = createAsyncThunk(
+  "projects/add",
+  async (formData, thunkAPI) => {
+    try {
+      const { data } = await axiosInstance.post("/api/v1/projects/add", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return data.message;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const updateProject = createAsyncThunk(
+  "projects/update",
+  async ({ id, formData }, thunkAPI) => {
+    try {
+      const { data } = await axiosInstance.put(`/api/v1/projects/update/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return data.message;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const deleteProject = createAsyncThunk(
+  "projects/delete",
+  async (id, thunkAPI) => {
+    try {
+      const { data } = await axiosInstance.delete(`/api/v1/projects/delete/${id}`);
+      return data.message;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data?.message || error.message);
+    }
+  }
+);
+
+// ✅ Slice
 const projectSlice = createSlice({
-  name: "project",
+  name: "projects",
   initialState: {
     loading: false,
     projects: [],
     singleProject: null,
-    error: null,
     message: null,
+    error: null,
   },
   reducers: {
-    getAllProjectsRequest(state) {
-      state.loading = true;
+    clearAllErrors: (state) => {
       state.error = null;
     },
-    getAllProjectsSuccess(state, action) {
-      state.projects = action.payload;
-      state.loading = false;
-      state.error = null;
-    },
-    getAllProjectsFailed(state, action) {
-      state.loading = false;
-      state.error = action.payload;
-    },
-
-    getSingleProjectRequest(state) {
-      state.loading = true;
-      state.error = null;
-    },
-    getSingleProjectSuccess(state, action) {
-      state.singleProject = action.payload;
-      state.loading = false;
-    },
-    getSingleProjectFailed(state, action) {
-      state.loading = false;
-      state.error = action.payload;
-    },
-
-    addNewProjectRequest(state) {
-      state.loading = true;
-      state.error = null;
-    },
-    addNewProjectSuccess(state, action) {
-      state.loading = false;
-      state.message = action.payload;
-    },
-    addNewProjectFailed(state, action) {
-      state.loading = false;
-      state.error = action.payload;
-    },
-
-    updateProjectRequest(state) {
-      state.loading = true;
-      state.error = null;
-    },
-    updateProjectSuccess(state, action) {
-      state.loading = false;
-      state.message = action.payload;
-    },
-    updateProjectFailed(state, action) {
-      state.loading = false;
-      state.error = action.payload;
-    },
-
-    deleteProjectRequest(state) {
-      state.loading = true;
-      state.error = null;
-    },
-    deleteProjectSuccess(state, action) {
-      state.loading = false;
-      state.message = action.payload;
-    },
-    deleteProjectFailed(state, action) {
-      state.loading = false;
-      state.error = action.payload;
-    },
-
-    resetProjectSlice(state) {
-      state.loading = false;
-      state.error = null;
+    resetProjectSlice: (state) => {
       state.message = null;
-    },
-    clearAllErrors(state) {
       state.error = null;
+      state.loading = false;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getAllProjects.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllProjects.fulfilled, (state, action) => {
+        state.loading = false;
+        state.projects = action.payload;
+      })
+      .addCase(getAllProjects.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(fetchProjectById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchProjectById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.singleProject = action.payload;
+      })
+      .addCase(fetchProjectById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(addNewProject.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(addNewProject.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload;
+      })
+      .addCase(addNewProject.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(updateProject.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateProject.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload;
+      })
+      .addCase(updateProject.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(deleteProject.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteProject.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload;
+      })
+      .addCase(deleteProject.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
-// Thunks
-export const getAllProjects = () => async (dispatch) => {
-  dispatch(projectSlice.actions.getAllProjectsRequest());
-  try {
-    const { data } = await axios.get(
-      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/projects/getall`,
-      { withCredentials: true }
-    );
-    dispatch(projectSlice.actions.getAllProjectsSuccess(data.projects));
-  } catch (error) {
-    dispatch(
-      projectSlice.actions.getAllProjectsFailed(
-        error?.response?.data?.message || error.message || "Failed to load projects"
-      )
-    );
-  }
-};
-
-export const fetchProjectById = (id) => async (dispatch) => {
-  dispatch(projectSlice.actions.getSingleProjectRequest());
-  try {
-    const { data } = await axios.get(
-      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/projects/${id}`,
-      { withCredentials: true }
-    );
-    dispatch(projectSlice.actions.getSingleProjectSuccess(data.project));
-  } catch (error) {
-    dispatch(
-      projectSlice.actions.getSingleProjectFailed(
-        error?.response?.data?.message || error.message || "Failed to load project"
-      )
-    );
-  }
-};
-
-export const addNewProject = (formData) => async (dispatch) => {
-  dispatch(projectSlice.actions.addNewProjectRequest());
-  try {
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/projects/add`,
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      }
-    );
-    dispatch(projectSlice.actions.addNewProjectSuccess(data.message));
-  } catch (error) {
-    dispatch(
-      projectSlice.actions.addNewProjectFailed(
-        error?.response?.data?.message || error.message || "Failed to add project"
-      )
-    );
-  }
-};
-
-export const updateProject = (id, formData) => async (dispatch) => {
-  dispatch(projectSlice.actions.updateProjectRequest());
-  try {
-    const { data } = await axios.put(
-      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/projects/update/${id}`,
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      }
-    );
-    dispatch(projectSlice.actions.updateProjectSuccess(data.message));
-  } catch (error) {
-    dispatch(
-      projectSlice.actions.updateProjectFailed(
-        error?.response?.data?.message || error.message || "Failed to update project"
-      )
-    );
-  }
-};
-
-export const deleteProject = (id) => async (dispatch) => {
-  dispatch(projectSlice.actions.deleteProjectRequest());
-  try {
-    const { data } = await axios.delete(
-      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/projects/delete/${id}`,
-      { withCredentials: true }
-    );
-    dispatch(projectSlice.actions.deleteProjectSuccess(data.message));
-  } catch (error) {
-    dispatch(
-      projectSlice.actions.deleteProjectFailed(
-        error?.response?.data?.message || error.message || "Failed to delete project"
-      )
-    );
-  }
-};
-
-export const resetProjectSlice = () => (dispatch) => {
-  dispatch(projectSlice.actions.resetProjectSlice());
-};
-
-export const clearAllProjectErrors = () => (dispatch) => {
-  dispatch(projectSlice.actions.clearAllErrors());
-};
-
+export const { clearAllErrors, resetProjectSlice } = projectSlice.actions;
 export default projectSlice.reducer;

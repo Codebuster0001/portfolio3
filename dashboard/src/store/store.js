@@ -15,4 +15,5 @@ export const store = configureStore({
     skill: skillReducer,
     project: projectReducer,
   },
+  devTools: import.meta.env.DEV,
 });

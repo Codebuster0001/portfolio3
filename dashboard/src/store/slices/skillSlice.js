@@ -1,6 +1,45 @@
-import { createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { toast } from "sonner";
+import axiosInstance from "@/lib/axiosInstance";
+
+// ✅ Async Thunks
+
+export const getAllSkills = createAsyncThunk("skills/getAll", async (_, thunkAPI) => {
+  try {
+    const { data } = await axiosInstance.get("/api/v1/skills/getall");
+    return data.skills;
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
+  }
+});
+
+export const addSkill = createAsyncThunk("skills/add", async (formData, thunkAPI) => {
+  try {
+    const { data } = await axiosInstance.post("/api/v1/skills/add", formData, {
+      headers: { "Content-Type": "application/json" },
+    });
+    toast.success(data.message);
+    thunkAPI.dispatch(getAllSkills());
+    return data.message;
+  } catch (err) {
+    toast.error(err.response?.data?.message || err.message);
+    return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
+  }
+});
+
+export const deleteSkill = createAsyncThunk("skills/delete", async (order, thunkAPI) => {
+  try {
+    const { data } = await axiosInstance.delete(`/api/v1/skills/delete/${order}`);
+    toast.success(data.message);
+    thunkAPI.dispatch(getAllSkills());
+    return data.message;
+  } catch (err) {
+    toast.error(err.response?.data?.message || err.message);
+    return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
+  }
+});
+
+// ✅ Slice
 
 const skillSlice = createSlice({
   name: "skill",
@@ -11,90 +50,48 @@ const skillSlice = createSlice({
     message: null,
   },
   reducers: {
-    requestStart: (state) => {
-      state.loading = true;
+    clearSkillMessages(state) {
       state.error = null;
       state.message = null;
     },
-    getSkillsSuccess: (state, action) => {
-      state.loading = false;
-      state.skills = action.payload;
-    },
-    requestSuccess: (state, action) => {
-      state.loading = false;
-      state.message = action.payload;
-    },
-    requestFail: (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-      toast.error(action.payload);
-    },
-    clearSkillMessages: (state) => {
-      state.error = null;
-      state.message = null;
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getAllSkills.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllSkills.fulfilled, (state, action) => {
+        state.loading = false;
+        state.skills = action.payload;
+      })
+      .addCase(getAllSkills.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(addSkill.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(addSkill.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload;
+      })
+      .addCase(addSkill.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteSkill.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteSkill.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload;
+      })
+      .addCase(deleteSkill.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
-export const {
-  requestStart,
-  getSkillsSuccess,
-  requestSuccess,
-  requestFail,
-  clearSkillMessages,
-} = skillSlice.actions;
-
+export const { clearSkillMessages } = skillSlice.actions;
 export default skillSlice.reducer;
-
-const axiosConfig = {
-  withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
-};
-
-// Get all skills
-export const getAllSkills = () => async (dispatch) => {
-  dispatch(requestStart());
-  try {
-    const { data } = await axios.get(
-      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/skills/getall`
-    );
-    dispatch(getSkillsSuccess(data.skills));
-  } catch (err) {
-    dispatch(requestFail(err.response?.data?.message || err.message));
-  }
-};
-
-// Add new skill
-export const addSkill = (formData) => async (dispatch) => {
-  dispatch(requestStart());
-  try {
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/skills/add`,
-      formData,
-      axiosConfig
-    );
-    dispatch(requestSuccess(data.message));
-    toast.success(data.message);
-    dispatch(getAllSkills());
-  } catch (err) {
-    dispatch(requestFail(err.response?.data?.message || err.message));
-  }
-};
-
-// Delete skill
-export const deleteSkill = (order) => async (dispatch) => {
-  dispatch(requestStart());
-  try {
-    const { data } = await axios.delete(
-      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/skills/delete/${order}`,
-      axiosConfig
-    );
-    dispatch(requestSuccess(data.message));
-    toast.success(data.message);
-    dispatch(getAllSkills());
-  } catch (err) {
-    dispatch(requestFail(err.response?.data?.message || err.message));
-  }
-};

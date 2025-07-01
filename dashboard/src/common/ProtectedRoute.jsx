@@ -6,10 +6,12 @@ const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isUserLoaded } = useSelector((state) => state.user);
   const location = useLocation();
 
+  // Wait until user info is loaded
   if (!isUserLoaded) return <div className="p-6">Loading...</div>;
 
+  // If not authenticated, redirect to login
   if (!isAuthenticated) {
-    return <Navigate to="/dashboard" state={{ from: location }} replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return children;

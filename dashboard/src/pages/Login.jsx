@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
-import loginGif from "@/assets/login2.gif"; // Make sure this is a valid image (GIF/PNG/JPG)
+import loginGif from "@/assets/login2.gif";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,16 +16,14 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { loading, isAuthenticated, error } = useSelector(
-    (state) => state.user
-  );
+  const { loading, isAuthenticated, error } = useSelector((state) => state.user);
 
   const handleLogin = () => {
     if (!email || !password) {
-      toast.error("Provide Email and Password!");
+      toast.error("Please provide both email and password!");
       return;
     }
-    dispatch(login(email, password));
+    dispatch(login({ email, password })); // ✅ FIX: Pass as object
   };
 
   useEffect(() => {
@@ -92,11 +90,7 @@ const Login = () => {
 
       {/* Image Section */}
       <div className="hidden lg:flex items-center justify-center bg-muted">
-        <img
-          src={loginGif}
-          alt="Login Illustration"
-          className="w-3/4 h-auto object-cover"
-        />
+        <img src={loginGif} alt="Login Illustration" className="w-3/4 h-auto object-cover" />
       </div>
     </div>
   );

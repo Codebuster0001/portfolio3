@@ -1,111 +1,77 @@
-import { createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axiosInstance from "@/lib/axiosInstance";
 
-const forgotResetPasswordSlice = createSlice({
-  name: "forgotPassword",
+// Forgot Password
+export const forgotPassword = createAsyncThunk(
+  "auth/forgotPassword",
+  async (email, thunkAPI) => {
+    try {
+      const { data } = await axiosInstance.post("/api/v1/user/forgot/password", { email });
+      return data.message;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to send reset email.");
+    }
+  }
+);
+
+// Reset Password
+export const resetPassword = createAsyncThunk(
+  "auth/resetPassword",
+  async ({ token, password }, thunkAPI) => {
+    try {
+      const { data } = await axiosInstance.put(`/api/v1/user/reset/password/${token}`, { password });
+      return data.message;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || "Reset failed.");
+    }
+  }
+);
+
+const forgotResetSlice = createSlice({
+  name: "forgotReset",
   initialState: {
     loading: false,
     error: null,
     message: null,
   },
   reducers: {
-    forgotPasswordRequest(state) {
-      state.loading = true;
+    clearForgotResetError: (state) => {
       state.error = null;
-      state.message = null;
     },
-    forgotPasswordSuccess(state, action) {
-      state.loading = false;
-      state.error = null;
-      state.message = action.payload;
-    },
-    forgotPasswordFailed(state, action) {
-      state.loading = false;
-      state.error = action.payload;
-      state.message = null;
-    },
-    resetPasswordRequest(state) {
-      state.loading = true;
-      state.error = null;
-      state.message = null;
-    },
-    resetPasswordSuccess(state, action) {
-      state.loading = false;
-      state.error = null;
-      state.message = action.payload;
-    },
-    resetPasswordFailed(state, action) {
-      state.loading = false;
-      state.error = action.payload;
-      state.message = null;
-    },
-    clearAllErrors(state) {
-      state.error = null;
+    clearForgotResetMessage: (state) => {
       state.message = null;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(forgotPassword.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(forgotPassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload;
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(resetPassword.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(resetPassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  },
 });
 
-// ✅ THUNK ACTIONS
+export const {
+  clearForgotResetError,
+  clearForgotResetMessage,
+} = forgotResetSlice.actions;
 
-export const forgotPassword = (email) => async (dispatch) => {
-  try {
-    dispatch(forgotResetPasswordSlice.actions.forgotPasswordRequest());
-
-    const response = await axios.post(
-      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/user/forgot/password`,
-      { email },
-      {
-        withCredentials: true,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-
-    dispatch(
-      forgotResetPasswordSlice.actions.forgotPasswordSuccess(
-        response.data.message
-      )
-    );
-  } catch (error) {
-    dispatch(
-      forgotResetPasswordSlice.actions.forgotPasswordFailed(
-        error.response?.data?.message || error.message
-      )
-    );
-  }
-};
-
-export const resetPassword =
-  (token, password, confirmPassword) => async (dispatch) => {
-    try {
-      dispatch(forgotResetPasswordSlice.actions.resetPasswordRequest());
-
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/user/password/reset/${token}`,
-        { password, confirmPassword },
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-
-      dispatch(
-        forgotResetPasswordSlice.actions.resetPasswordSuccess(
-          response.data.message
-        )
-      );
-    } catch (error) {
-      dispatch(
-        forgotResetPasswordSlice.actions.resetPasswordFailed(
-          error.response?.data?.message || error.message
-        )
-      );
-    }
-  };
-
-export const clearAllForgotResetPassErrors = () => (dispatch) => {
-  dispatch(forgotResetPasswordSlice.actions.clearAllErrors());
-};
-
-// ✅ EXPORT REDUCER
-export default forgotResetPasswordSlice.reducer;
+export default forgotResetSlice.reducer;

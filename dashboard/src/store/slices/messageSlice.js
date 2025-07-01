@@ -1,110 +1,82 @@
-import { createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axiosInstance from "@/lib/axiosInstance";
 
+// ✅ Thunks
+export const getAllMessages = createAsyncThunk(
+  "messages/getAll",
+  async (_, thunkAPI) => {
+    try {
+      const { data } = await axiosInstance.get("/api/v1/message/getall");
+      return data.messages;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
+    }
+  }
+);
+
+export const deleteMessage = createAsyncThunk(
+  "messages/delete",
+  async (id, thunkAPI) => {
+    try {
+      const { data } = await axiosInstance.delete(`/api/v1/message/delete/${id}`);
+      return { message: data.message, id };
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
+    }
+  }
+);
+
+// ✅ Slice
 const messageSlice = createSlice({
   name: "messages",
   initialState: {
     loading: false,
     messages: [],
-    error: null,
     message: null,
+    error: null,
   },
   reducers: {
-    getAllMessagesRequest(state) {
-      state.loading = true;
+    clearAllErrors: (state) => {
       state.error = null;
     },
-    getAllMessagesSuccess(state, action) {
-      state.loading = false;
-      state.messages = action.payload;
-      state.error = null;
-    },
-    getAllMessagesFailed(state, action) {
-      state.loading = false;
-      state.error = action.payload;
-    },
-
-    deleteMessageRequest(state) {
-      state.loading = true;
-      state.error = null;
+    resetMessageSlice: (state) => {
       state.message = null;
-    },
-    deleteMessageSuccess(state, action) {
-      state.loading = false;
-      state.message = action.payload.message;
-      state.messages = state.messages.filter(
-        (msg) => msg._id !== action.payload.id
-      );
-    },
-    deleteMessageFailed(state, action) {
-      state.loading = false;
-      state.error = action.payload;
-    },
-
-    resetMessageSlice(state) {
-      state.loading = false;
       state.error = null;
-      state.message = null;
+      state.loading = false;
     },
-    clearAllErrors(state) {
-      state.error = null;
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getAllMessages.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllMessages.fulfilled, (state, action) => {
+        state.loading = false;
+        state.messages = action.payload;
+      })
+      .addCase(getAllMessages.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteMessage.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteMessage.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload.message;
+        state.messages = state.messages.filter((msg) => msg._id !== action.payload.id);
+      })
+      .addCase(deleteMessage.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
-// ✅ Thunks
-
-export const getAllMessages = () => async (dispatch) => {
-  dispatch(messageSlice.actions.getAllMessagesRequest());
-  try {
-    const response = await axios.get(
-      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/message/getall`,
-      { withCredentials: true }
-    );
-    dispatch(
-      messageSlice.actions.getAllMessagesSuccess(response.data.messages)
-    );
-  } catch (error) {
-    dispatch(
-      messageSlice.actions.getAllMessagesFailed(
-        error.response?.data?.message || error.message
-      )
-    );
-  }
-};
-
-export const deleteMessage = (id) => async (dispatch) => {
-  dispatch(messageSlice.actions.deleteMessageRequest());
-  try {
-    const response = await axios.delete(
-      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/message/delete/${id}`,
-      { withCredentials: true }
-    );
-    dispatch(
-      messageSlice.actions.deleteMessageSuccess({
-        message: response.data.message,
-        id,
-      })
-    );
-  } catch (error) {
-    dispatch(
-      messageSlice.actions.deleteMessageFailed(
-        error.response?.data?.message || error.message
-      )
-    );
-  }
-};
-
-// ✅ Helpers
-export const clearAllMessageErrors = () => (dispatch) => {
-  dispatch(messageSlice.actions.clearAllErrors());
-};
-
-export const resetMessagesSlice = () => (dispatch) => {
-  dispatch(messageSlice.actions.resetMessageSlice());
-};
-
-// ✅ Aliased export for compatibility
-export { getAllMessages as fetchAllMessages };
-
+export const { clearAllErrors, resetMessageSlice } = messageSlice.actions;
 export default messageSlice.reducer;

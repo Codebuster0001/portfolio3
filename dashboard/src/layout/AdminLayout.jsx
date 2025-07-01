@@ -1,26 +1,28 @@
 // src/layout/AdminLayout.jsx
+import { Outlet } from "react-router-dom";
 import AdminSidebar from "../common/AdminSidebar";
 import AdminHeader from "../common/AdminHeader";
-import { Outlet } from "react-router-dom";
 
 const AdminLayout = () => {
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex min-h-screen overflow-hidden bg-background">
+      {/* Sidebar */}
       <AdminSidebar />
 
-      {/* Right side layout */}
-      <div className="flex flex-col flex-1 overflow-hidden">
+      {/* Main content */}
+      <div className="flex flex-col flex-1">
+        {/* Header */}
         <AdminHeader />
 
-        {/* Only this part should scroll */}
+        {/* Scrollable main section */}
         <main className="flex-1 overflow-y-auto p-6 text-base font-medium">
           <Outlet />
         </main>
 
         {/* Footer */}
-        <div className="text-xs text-gray-400 border-t mt-auto px-2 py-2">
+        <footer className="text-xs text-muted-foreground border-t px-4 py-2 text-center">
           &copy; {new Date().getFullYear()} Admin Dashboard
-        </div>
+        </footer>
       </div>
     </div>
   );

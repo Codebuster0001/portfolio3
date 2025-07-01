@@ -1,3 +1,4 @@
+// ✅ Dashboard.jsx
 import {
   Chart as ChartJS,
   LineElement,
@@ -54,19 +55,20 @@ const Dashboard = () => {
 
   const { user } = useSelector((state) => state.user);
   const {
-    projects,
+    projects = [],
     loading: projectLoading,
     error: projectError,
   } = useSelector((state) => state.project);
 
-  const { messages, error: messageError } = useSelector(
-    (state) => state.messages
-  );
+  const {
+    messages = [],
+    error: messageError,
+  } = useSelector((state) => state.messages);
 
   useEffect(() => {
-    dispatch(getAllProjects());
-    dispatch(getAllMessages());
-  }, [dispatch]);
+    if (!projects.length) dispatch(getAllProjects());
+    if (!messages.length) dispatch(getAllMessages());
+  }, [dispatch, projects.length, messages.length]);
 
   useEffect(() => {
     if (projectError) {
@@ -79,14 +81,12 @@ const Dashboard = () => {
     }
   }, [projectError, messageError, dispatch]);
 
-  const projectCount = projects?.length || 0;
-
   const projectChartData = {
-    labels: projects.map((p, index) => `Project ${index + 1}`),
+    labels: projects.map((p, i) => `Project ${i + 1}`),
     datasets: [
       {
         label: "Projects",
-        data: projects.map(() => 1),
+        data: projects.map((_, i) => i + 1),
         fill: false,
         borderColor: "#3b82f6",
         backgroundColor: "#3b82f6",
@@ -95,9 +95,14 @@ const Dashboard = () => {
     ],
   };
 
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+  };
+
   return (
     <section className="flex flex-col gap-8 px-4 sm:px-6 py-6 bg-background min-h-screen">
-      {/* Top Section */}
+      {/* Welcome + Stats */}
       <div className="flex flex-col lg:flex-row gap-6">
         <Card className="flex-1">
           <CardHeader>
@@ -133,7 +138,7 @@ const Dashboard = () => {
               Projects
             </CardTitle>
             <CardTitle className="text-4xl font-bold">
-              {projectLoading ? "Loading..." : projectCount}
+              {projectLoading ? "Loading..." : projects.length}
             </CardTitle>
           </CardHeader>
           <CardFooter>
@@ -147,24 +152,22 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Project Line Chart */}
+      {/* Project Chart */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg font-semibold">
             Project Overview
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <Line data={projectChartData} />
+        <CardContent className="h-[300px]">
+          <Line data={projectChartData} options={chartOptions} />
         </CardContent>
       </Card>
 
-      {/* Latest Messages */}
+      {/* Messages Table */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">
-            Latest Messages
-          </CardTitle>
+          <CardTitle className="text-lg font-semibold">Latest Messages</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -177,29 +180,37 @@ const Dashboard = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {messages
-                ?.slice(-15) // latest 15 messages only
-                .reverse()
-                .map((msg) => (
-                  <TableRow key={msg._id}>
-                    <TableCell>{msg.name}</TableCell>
-                    <TableCell>{msg.email}</TableCell>
-                    <TableCell className="max-w-[200px] truncate">
-                      {msg.message}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() =>
-                          navigate(`/dashboard/messages?reply=${msg._id}`)
-                        }
-                      >
-                        Reply
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+              {messages.length ? (
+                messages
+                  .slice(-15)
+                  .reverse()
+                  .map((msg) => (
+                    <TableRow key={msg._id}>
+                      <TableCell>{msg.name}</TableCell>
+                      <TableCell>{msg.email}</TableCell>
+                      <TableCell className="max-w-[200px] truncate">
+                        {msg.message}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            navigate(`/dashboard/messages?reply=${msg._id}`)
+                          }
+                        >
+                          Reply
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center text-muted-foreground">
+                    No messages found.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </CardContent>
