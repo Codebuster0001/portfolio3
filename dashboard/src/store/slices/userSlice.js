@@ -17,7 +17,6 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // LOGIN
     loginRequest: (state) => {
       state.loading = true;
       state.isAuthenticated = false;
@@ -37,7 +36,6 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
-    // LOGOUT
     logoutSuccess: (state, action) => {
       state.loading = false;
       state.isAuthenticated = false;
@@ -50,7 +48,6 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
-    // LOAD USER
     loadUserRequest: (state) => {
       state.loading = true;
       state.isAuthenticated = false;
@@ -72,7 +69,6 @@ const userSlice = createSlice({
       state.isUserLoaded = true;
     },
 
-    // UPDATE PASSWORD
     updatePasswordRequest: (state) => {
       state.loading = true;
       state.isUpdated = false;
@@ -91,7 +87,6 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
-    // UPDATE PROFILE
     updateProfileRequest: (state) => {
       state.loading = true;
       state.isUpdated = false;
@@ -110,7 +105,6 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
-    // RESET / CLEAR
     resetUpdateState: (state) => {
       state.isUpdated = false;
       state.message = null;
@@ -126,7 +120,6 @@ const userSlice = createSlice({
   },
 });
 
-// Export Actions
 export const {
   loginRequest,
   loginSuccess,
@@ -148,7 +141,6 @@ export const {
   resetUserState,
 } = userSlice.actions;
 
-// Export Reducer
 export default userSlice.reducer;
 
 // ---------------- ASYNC THUNKS ----------------
@@ -158,18 +150,15 @@ export const login = (email, password) => async (dispatch) => {
   dispatch(loginRequest());
   try {
     const { data } = await axios.post(
-      "https://portfolio-1dkv.onrender.com/api/v1/user/login",
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/user/login`,
       { email, password },
       {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
       }
     );
-
-    console.log("LOGIN SUCCESS:", data);
     dispatch(loginSuccess(data.user));
   } catch (error) {
-    console.error("LOGIN FAILED:", error.response?.data || error.message);
     dispatch(loginFailed(error.response?.data?.message || "Login failed"));
   }
 };
@@ -179,16 +168,14 @@ export const getUser = () => async (dispatch) => {
   dispatch(loadUserRequest());
   try {
     const { data } = await axios.get(
-      "https://portfolio-1dkv.onrender.com/api/v1/user/me",
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/user/me`,
       {
         withCredentials: true,
       }
     );
     dispatch(loadUserSuccess(data.user));
   } catch (error) {
-    dispatch(
-      loadUserFailed(error.response?.data?.message || "Failed to load user")
-    );
+    dispatch(loadUserFailed(error.response?.data?.message || "Failed to load user"));
   }
 };
 
@@ -196,7 +183,7 @@ export const getUser = () => async (dispatch) => {
 export const logout = () => async (dispatch) => {
   try {
     const { data } = await axios.get(
-      "https://portfolio-1dkv.onrender.com/api/v1/user/logout",
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/user/logout`,
       {
         withCredentials: true,
       }
@@ -213,7 +200,7 @@ export const updatePassword =
     dispatch(updatePasswordRequest());
     try {
       const { data } = await axios.put(
-        "https://portfolio-1dkv.onrender.com/api/v1/user/update/password",
+        `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/user/update/password`,
         { currentPassword, newPassword, confirmNewPassword },
         {
           withCredentials: true,
@@ -222,11 +209,7 @@ export const updatePassword =
       );
       dispatch(updatePasswordSuccess(data.message));
     } catch (error) {
-      dispatch(
-        updatePasswordFailed(
-          error.response?.data?.message || "Update password failed"
-        )
-      );
+      dispatch(updatePasswordFailed(error.response?.data?.message || "Update password failed"));
     }
   };
 
@@ -235,7 +218,7 @@ export const updateProfile = (formData) => async (dispatch) => {
   dispatch(updateProfileRequest());
   try {
     const { data } = await axios.put(
-      "https://portfolio-1dkv.onrender.com/api/v1/user/me/profile/update",
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/user/me/profile/update`,
       formData,
       {
         withCredentials: true,
@@ -244,11 +227,7 @@ export const updateProfile = (formData) => async (dispatch) => {
     );
     dispatch(updateProfileSuccess(data.message));
   } catch (error) {
-    dispatch(
-      updateProfileFailed(
-        error.response?.data?.message || "Profile update failed"
-      )
-    );
+    dispatch(updateProfileFailed(error.response?.data?.message || "Profile update failed"));
   }
 };
 

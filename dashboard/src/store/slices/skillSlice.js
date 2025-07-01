@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "sonner";
 
-// Initial state
 const skillSlice = createSlice({
   name: "skill",
   initialState: {
@@ -47,7 +46,6 @@ export const {
 
 export default skillSlice.reducer;
 
-// Axios Config
 const axiosConfig = {
   withCredentials: true,
   headers: {
@@ -55,12 +53,12 @@ const axiosConfig = {
   },
 };
 
-// ✅ 1. Get all skills
+// Get all skills
 export const getAllSkills = () => async (dispatch) => {
   dispatch(requestStart());
   try {
     const { data } = await axios.get(
-      "https://portfolio-1dkv.onrender.com/api/v1/skills/getall"
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/skills/getall`
     );
     dispatch(getSkillsSuccess(data.skills));
   } catch (err) {
@@ -68,34 +66,34 @@ export const getAllSkills = () => async (dispatch) => {
   }
 };
 
-// ✅ 2. Add new skill
+// Add new skill
 export const addSkill = (formData) => async (dispatch) => {
   dispatch(requestStart());
   try {
     const { data } = await axios.post(
-      "https://portfolio-1dkv.onrender.com/api/v1/skills/add",
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/skills/add`,
       formData,
       axiosConfig
     );
     dispatch(requestSuccess(data.message));
     toast.success(data.message);
-    dispatch(getAllSkills()); // Refresh list
+    dispatch(getAllSkills());
   } catch (err) {
     dispatch(requestFail(err.response?.data?.message || err.message));
   }
 };
 
-// ✅ 3. Delete skill by order
+// Delete skill
 export const deleteSkill = (order) => async (dispatch) => {
   dispatch(requestStart());
   try {
     const { data } = await axios.delete(
-      `https://portfolio-1dkv.onrender.com/api/v1/skills/delete/${order}`,
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/skills/delete/${order}`,
       axiosConfig
     );
     dispatch(requestSuccess(data.message));
     toast.success(data.message);
-    dispatch(getAllSkills()); // Refresh list
+    dispatch(getAllSkills());
   } catch (err) {
     dispatch(requestFail(err.response?.data?.message || err.message));
   }

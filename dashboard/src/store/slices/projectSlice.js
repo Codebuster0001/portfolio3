@@ -11,7 +11,6 @@ const projectSlice = createSlice({
     message: null,
   },
   reducers: {
-    // Get All Projects
     getAllProjectsRequest(state) {
       state.loading = true;
       state.error = null;
@@ -26,7 +25,6 @@ const projectSlice = createSlice({
       state.error = action.payload;
     },
 
-    // Get Single Project
     getSingleProjectRequest(state) {
       state.loading = true;
       state.error = null;
@@ -40,7 +38,6 @@ const projectSlice = createSlice({
       state.error = action.payload;
     },
 
-    // Add Project
     addNewProjectRequest(state) {
       state.loading = true;
       state.error = null;
@@ -54,7 +51,6 @@ const projectSlice = createSlice({
       state.error = action.payload;
     },
 
-    // Update Project
     updateProjectRequest(state) {
       state.loading = true;
       state.error = null;
@@ -68,7 +64,6 @@ const projectSlice = createSlice({
       state.error = action.payload;
     },
 
-    // Delete Project
     deleteProjectRequest(state) {
       state.loading = true;
       state.error = null;
@@ -82,7 +77,6 @@ const projectSlice = createSlice({
       state.error = action.payload;
     },
 
-    // Utilities
     resetProjectSlice(state) {
       state.loading = false;
       state.error = null;
@@ -95,57 +89,45 @@ const projectSlice = createSlice({
 });
 
 // Thunks
-
-// Get all projects
 export const getAllProjects = () => async (dispatch) => {
   dispatch(projectSlice.actions.getAllProjectsRequest());
   try {
     const { data } = await axios.get(
-      "https://portfolio-1dkv.onrender.com/api/v1/projects/getall",
-      {
-        withCredentials: true,
-      }
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/projects/getall`,
+      { withCredentials: true }
     );
     dispatch(projectSlice.actions.getAllProjectsSuccess(data.projects));
   } catch (error) {
     dispatch(
       projectSlice.actions.getAllProjectsFailed(
-        error?.response?.data?.message ||
-          error.message ||
-          "Failed to load projects"
+        error?.response?.data?.message || error.message || "Failed to load projects"
       )
     );
   }
 };
 
-// Get single project
 export const fetchProjectById = (id) => async (dispatch) => {
   dispatch(projectSlice.actions.getSingleProjectRequest());
   try {
     const { data } = await axios.get(
-      `https://portfolio-1dkv.onrender.com/api/v1/projects/${id}`,
-      {
-        withCredentials: true,
-      }
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/projects/${id}`,
+      { withCredentials: true }
     );
     dispatch(projectSlice.actions.getSingleProjectSuccess(data.project));
   } catch (error) {
     dispatch(
       projectSlice.actions.getSingleProjectFailed(
-        error?.response?.data?.message ||
-          error.message ||
-          "Failed to load project"
+        error?.response?.data?.message || error.message || "Failed to load project"
       )
     );
   }
 };
 
-// Add new project
 export const addNewProject = (formData) => async (dispatch) => {
   dispatch(projectSlice.actions.addNewProjectRequest());
   try {
     const { data } = await axios.post(
-      "https://portfolio-1dkv.onrender.com/api/v1/projects/add",
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/projects/add`,
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" },
@@ -156,20 +138,17 @@ export const addNewProject = (formData) => async (dispatch) => {
   } catch (error) {
     dispatch(
       projectSlice.actions.addNewProjectFailed(
-        error?.response?.data?.message ||
-          error.message ||
-          "Failed to add project"
+        error?.response?.data?.message || error.message || "Failed to add project"
       )
     );
   }
 };
 
-// Update project
 export const updateProject = (id, formData) => async (dispatch) => {
   dispatch(projectSlice.actions.updateProjectRequest());
   try {
     const { data } = await axios.put(
-      `https://portfolio-1dkv.onrender.com/api/v1/projects/update/${id}`,
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/projects/update/${id}`,
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" },
@@ -180,40 +159,33 @@ export const updateProject = (id, formData) => async (dispatch) => {
   } catch (error) {
     dispatch(
       projectSlice.actions.updateProjectFailed(
-        error?.response?.data?.message ||
-          error.message ||
-          "Failed to update project"
+        error?.response?.data?.message || error.message || "Failed to update project"
       )
     );
   }
 };
 
-// Delete project
 export const deleteProject = (id) => async (dispatch) => {
   dispatch(projectSlice.actions.deleteProjectRequest());
   try {
     const { data } = await axios.delete(
-      `https://portfolio-1dkv.onrender.com/api/v1/projects/delete/${id}`,
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/projects/delete/${id}`,
       { withCredentials: true }
     );
     dispatch(projectSlice.actions.deleteProjectSuccess(data.message));
   } catch (error) {
     dispatch(
       projectSlice.actions.deleteProjectFailed(
-        error?.response?.data?.message ||
-          error.message ||
-          "Failed to delete project"
+        error?.response?.data?.message || error.message || "Failed to delete project"
       )
     );
   }
 };
 
-// Reset all state values
 export const resetProjectSlice = () => (dispatch) => {
   dispatch(projectSlice.actions.resetProjectSlice());
 };
 
-// Clear only errors
 export const clearAllProjectErrors = () => (dispatch) => {
   dispatch(projectSlice.actions.clearAllErrors());
 };

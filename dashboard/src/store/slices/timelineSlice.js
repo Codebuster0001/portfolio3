@@ -57,7 +57,7 @@ export const getAllTimelines = () => async (dispatch) => {
   try {
     dispatch(timelineSlice.actions.request());
     const { data } = await axios.get(
-      "https://portfolio-1dkv.onrender.com/api/v1/timeline/getall"
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/timeline/getall`
     );
     dispatch(timelineSlice.actions.getAllSuccess(data.timeline));
   } catch (err) {
@@ -71,7 +71,7 @@ export const createTimeline = (timelineData) => async (dispatch) => {
   try {
     dispatch(timelineSlice.actions.request());
     const { data } = await axios.post(
-      "https://portfolio-1dkv.onrender.com/api/v1/timeline/create",
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/timeline/create`,
       timelineData,
       {
         withCredentials: true,
@@ -90,7 +90,7 @@ export const deleteTimeline = (id) => async (dispatch) => {
   try {
     dispatch(timelineSlice.actions.request());
     const { data } = await axios.delete(
-      `https://portfolio-1dkv.onrender.com/api/v1/timeline/delete/${id}`,
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/timeline/delete/${id}`,
       { withCredentials: true }
     );
     dispatch(
@@ -107,7 +107,7 @@ export const updateTimeline = (id, timelineData) => async (dispatch) => {
   try {
     dispatch(timelineSlice.actions.request());
     const { data } = await axios.put(
-      `https://portfolio-1dkv.onrender.com/api/v1/timeline/update/${id}`,
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/timeline/update/${id}`,
       timelineData,
       {
         withCredentials: true,
@@ -130,5 +130,4 @@ export const clearTimelineErrors = () => (dispatch) =>
 export const clearTimelineMessages = () => (dispatch) =>
   dispatch(timelineSlice.actions.clearMessages());
 
-// ✅ Export reducer
 export default timelineSlice.reducer;

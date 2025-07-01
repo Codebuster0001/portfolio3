@@ -58,7 +58,7 @@ export const getAllMessages = () => async (dispatch) => {
   dispatch(messageSlice.actions.getAllMessagesRequest());
   try {
     const response = await axios.get(
-      "https://portfolio-1dkv.onrender.com/api/v1/message/getall",
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/message/getall`,
       { withCredentials: true }
     );
     dispatch(
@@ -77,7 +77,7 @@ export const deleteMessage = (id) => async (dispatch) => {
   dispatch(messageSlice.actions.deleteMessageRequest());
   try {
     const response = await axios.delete(
-      `https://portfolio-1dkv.onrender.com/api/v1/message/delete/${id}`,
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/message/delete/${id}`,
       { withCredentials: true }
     );
     dispatch(

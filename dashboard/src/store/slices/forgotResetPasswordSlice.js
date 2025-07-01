@@ -53,7 +53,7 @@ export const forgotPassword = (email) => async (dispatch) => {
     dispatch(forgotResetPasswordSlice.actions.forgotPasswordRequest());
 
     const response = await axios.post(
-      "https://portfolio-1dkv.onrender.com/api/v1/user/forgot/password",
+      `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/user/forgot/password`,
       { email },
       {
         withCredentials: true,
@@ -81,7 +81,7 @@ export const resetPassword =
       dispatch(forgotResetPasswordSlice.actions.resetPasswordRequest());
 
       const response = await axios.put(
-        `https://portfolio-1dkv.onrender.com/api/v1/user/password/reset/${token}`,
+        `${import.meta.env.VITE_API_URL_DASHBOARD}/api/v1/user/password/reset/${token}`,
         { password, confirmPassword },
         {
           withCredentials: true,
