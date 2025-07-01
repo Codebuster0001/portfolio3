@@ -14,20 +14,14 @@ const initialState = {
 
 // ✅ Async Thunks
 
-export const login = createAsyncThunk(
-  "user/login",
-  async ({ email, password }, thunkAPI) => {
-    try {
-      const { data } = await axiosInstance.post("/api/v1/user/login", {
-        email,
-        password,
-      });
-      return data.user;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || "Login failed");
-    }
+export const login = createAsyncThunk("user/login", async ({ email, password }, thunkAPI) => {
+  try {
+    const { data } = await axiosInstance.post("/api/v1/user/login", { email, password });
+    return data.user;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || "Login failed");
   }
-);
+});
 
 export const getUser = createAsyncThunk("user/getMe", async (_, thunkAPI) => {
   try {
@@ -58,32 +52,21 @@ export const updatePassword = createAsyncThunk(
       });
       return data.message;
     } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Update password failed"
-      );
+      return thunkAPI.rejectWithValue(error.response?.data?.message || "Update password failed");
     }
   }
 );
 
-export const updateProfile = createAsyncThunk(
-  "user/updateProfile",
-  async (formData, thunkAPI) => {
-    try {
-      const { data } = await axiosInstance.put(
-        "/api/v1/user/me/profile/update",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-      return data.message;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Profile update failed"
-      );
-    }
+export const updateProfile = createAsyncThunk("user/updateProfile", async (formData, thunkAPI) => {
+  try {
+    const { data } = await axiosInstance.put("/api/v1/user/me/profile/update", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return data.message;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || "Profile update failed");
   }
-);
+});
 
 // ✅ Slice
 const userSlice = createSlice({

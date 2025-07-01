@@ -22,13 +22,12 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const { loading, error, message } = useSelector(
-    (state) => state.forgotPassword
-  );
+  const { loading, error, message } = useSelector((state) => state.forgotReset);
   const { isAuthenticated } = useSelector((state) => state.user);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (!password || !confirmPassword) {
       toast.error("All fields are required");
       return;
@@ -38,7 +37,7 @@ const ResetPassword = () => {
       return;
     }
 
-    dispatch(resetPassword(token, password, confirmPassword));
+    dispatch(resetPassword({ token, password }));
   };
 
   useEffect(() => {
@@ -60,6 +59,7 @@ const ResetPassword = () => {
 
   return (
     <div className="grid lg:grid-cols-2 min-h-screen">
+      {/* Form Section */}
       <div className="flex items-center justify-center px-4">
         <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6">
           <h1 className="text-3xl font-bold text-center">Reset Password</h1>
@@ -68,7 +68,7 @@ const ResetPassword = () => {
           </p>
 
           <div className="space-y-4">
-            {/* Password Field */}
+            {/* New Password */}
             <div className="space-y-1">
               <Label>New Password</Label>
               <div className="relative">
@@ -87,7 +87,7 @@ const ResetPassword = () => {
               </div>
             </div>
 
-            {/* Confirm Password Field */}
+            {/* Confirm Password */}
             <div className="space-y-1">
               <Label>Confirm New Password</Label>
               <div className="relative">
@@ -101,15 +101,12 @@ const ResetPassword = () => {
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-muted-foreground"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
-                  {showConfirmPassword ? (
-                    <EyeOff size={18} />
-                  ) : (
-                    <Eye size={18} />
-                  )}
+                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </span>
               </div>
             </div>
 
+            {/* Submit */}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Resetting..." : "Reset Password"}
             </Button>
@@ -117,6 +114,7 @@ const ResetPassword = () => {
         </form>
       </div>
 
+      {/* Image Section */}
       <div className="hidden lg:flex items-center justify-center bg-muted">
         <img src="/reset.png" alt="Reset" className="w-3/4 h-auto" />
       </div>

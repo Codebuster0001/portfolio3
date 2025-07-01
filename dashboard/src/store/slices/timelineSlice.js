@@ -32,16 +32,19 @@ export const deleteTimeline = createAsyncThunk("timeline/delete", async (id, thu
   }
 });
 
-export const updateTimeline = createAsyncThunk("timeline/update", async ({ id, timelineData }, thunkAPI) => {
-  try {
-    const { data } = await axiosInstance.put(`/api/v1/timeline/update/${id}`, timelineData, {
-      headers: { "Content-Type": "application/json" },
-    });
-    return data;
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
+export const updateTimeline = createAsyncThunk(
+  "timeline/update",
+  async ({ id, timelineData }, thunkAPI) => {
+    try {
+      const { data } = await axiosInstance.put(`/api/v1/timeline/update/${id}`, timelineData, {
+        headers: { "Content-Type": "application/json" },
+      });
+      return data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response?.data?.message || err.message);
+    }
   }
-});
+);
 
 // ✅ Slice
 
@@ -64,6 +67,7 @@ const timelineSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // GET ALL
       .addCase(getAllTimelines.pending, (state) => {
         state.loading = true;
       })
@@ -76,6 +80,7 @@ const timelineSlice = createSlice({
         state.error = action.payload;
       })
 
+      // CREATE
       .addCase(createTimeline.pending, (state) => {
         state.loading = true;
       })
@@ -88,19 +93,23 @@ const timelineSlice = createSlice({
         state.error = action.payload;
       })
 
+      // DELETE
       .addCase(deleteTimeline.pending, (state) => {
         state.loading = true;
       })
       .addCase(deleteTimeline.fulfilled, (state, action) => {
         state.loading = false;
         state.message = action.payload.message;
-        state.timelines = state.timelines.filter((item) => item._id !== action.payload.id);
+        state.timelines = state.timelines.filter(
+          (item) => item._id !== action.payload.id
+        );
       })
       .addCase(deleteTimeline.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
+      // UPDATE
       .addCase(updateTimeline.pending, (state) => {
         state.loading = true;
       })

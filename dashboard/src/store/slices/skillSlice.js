@@ -57,6 +57,7 @@ const skillSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // GET
       .addCase(getAllSkills.pending, (state) => {
         state.loading = true;
       })
@@ -68,6 +69,8 @@ const skillSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+
+      // ADD
       .addCase(addSkill.pending, (state) => {
         state.loading = true;
       })
@@ -79,6 +82,8 @@ const skillSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+
+      // DELETE
       .addCase(deleteSkill.pending, (state) => {
         state.loading = true;
       })
@@ -93,5 +98,13 @@ const skillSlice = createSlice({
   },
 });
 
+// ✅ Actions
 export const { clearSkillMessages } = skillSlice.actions;
+
+// ✅ Reducer
 export default skillSlice.reducer;
+
+// ✅ Helpers
+export const resetSkillSlice = () => (dispatch) => {
+  dispatch(clearSkillMessages());
+};

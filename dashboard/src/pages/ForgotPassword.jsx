@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { useNavigate, Link } from "react-router-dom";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -18,13 +19,13 @@ const ForgotPassword = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { loading, error, message } = useSelector((state) => state.forgotReset); // ✅ FIX: correct slice name
+  const { loading, error, message } = useSelector((state) => state.forgotReset);
   const { isAuthenticated } = useSelector((state) => state.user);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!email) return toast.error("Please enter your email");
-    dispatch(forgotPassword({ email })); // ✅ FIX: Wrap in object
+    dispatch(forgotPassword(email)); // Do NOT wrap in object here
   };
 
   useEffect(() => {

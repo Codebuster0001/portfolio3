@@ -1,32 +1,43 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axiosInstance";
 
-// Forgot Password
+// ✅ Forgot Password
 export const forgotPassword = createAsyncThunk(
   "auth/forgotPassword",
   async (email, thunkAPI) => {
     try {
-      const { data } = await axiosInstance.post("/api/v1/user/forgot/password", { email });
+      const { data } = await axiosInstance.post(
+        "/api/v1/user/forgot/password",
+        { email }
+      );
       return data.message;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to send reset email.");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to send reset email."
+      );
     }
   }
 );
 
-// Reset Password
+// ✅ Reset Password
 export const resetPassword = createAsyncThunk(
   "auth/resetPassword",
   async ({ token, password }, thunkAPI) => {
     try {
-      const { data } = await axiosInstance.put(`/api/v1/user/reset/password/${token}`, { password });
+      const { data } = await axiosInstance.put(
+        `/api/v1/user/reset/password/${token}`,
+        { password }
+      );
       return data.message;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || "Reset failed.");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Password reset failed."
+      );
     }
   }
 );
 
+// ✅ Slice
 const forgotResetSlice = createSlice({
   name: "forgotReset",
   initialState: {
@@ -55,6 +66,7 @@ const forgotResetSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+
       .addCase(resetPassword.pending, (state) => {
         state.loading = true;
       })
@@ -69,9 +81,17 @@ const forgotResetSlice = createSlice({
   },
 });
 
+// ✅ Actions
 export const {
   clearForgotResetError,
   clearForgotResetMessage,
 } = forgotResetSlice.actions;
 
+// ✅ Reducer
 export default forgotResetSlice.reducer;
+
+// ✅ Helpers
+export const clearAllForgotResetPassErrors = () => (dispatch) => {
+  dispatch(clearForgotResetError());
+  dispatch(clearForgotResetMessage());
+};
