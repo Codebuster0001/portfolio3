@@ -87,11 +87,11 @@ export const {
   clearForgotResetMessage,
 } = forgotResetSlice.actions;
 
-// ✅ Reducer
-export default forgotResetSlice.reducer;
-
 // ✅ Helpers
 export const clearAllForgotResetPassErrors = () => (dispatch) => {
   dispatch(clearForgotResetError());
   dispatch(clearForgotResetMessage());
 };
+
+// ✅ Reducer
+export default forgotResetSlice.reducer;

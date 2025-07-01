@@ -7,10 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
-import {
-  forgotPassword,
-  clearForgotResetError,
-} from "@/store/slices/forgotResetPasswordSlice";
+import { clearAllForgotResetPassErrors } from "@/store/slices/forgotResetPasswordSlice";
 
 import forgotPasswordGif from "@/assets/Forgotpassword.gif";
 
