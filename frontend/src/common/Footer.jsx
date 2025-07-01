@@ -1,38 +1,61 @@
-import React from "react";
-import { FaGithub, FaLinkedin, FaTwitter, FaArrowUp } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import { FaGithub, FaLinkedin, FaInstagram } from "react-icons/fa";
+import axios from "axios";
 
 const Footer = () => {
-  // Scroll to top function
+  const [user, setUser] = useState({});
+
+  const getMyFooter = async () => {
+    try {
+      const { data } = await axios.get(
+        "http://localhost:5000/api/v1/user/portfolio/me",
+        { withCredentials: true }
+      );
+      setUser(data.user);
+    } catch (error) {
+      console.error("Failed to load profile:", error);
+    }
+  };
+
+  useEffect(() => {
+    getMyFooter();
+  }, []);
 
   return (
-    <footer className="w-full border-t border-white/10  py-8 bg-transparent text-center">
+    <footer className="w-full border-t border-white/10 py-8 bg-transparent text-center">
       <div className="max-w-7xl mx-auto px-4 space-y-4">
         {/* Social Icons */}
         <div className="flex justify-center gap-5 text-gray-500 dark:text-gray-400 text-xl">
-          <a
-            href="https://github.com/yourusername"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-white transition"
-          >
-            <FaGithub />
-          </a>
-          <a
-            href="https://linkedin.com/in/yourusername"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-white transition"
-          >
-            <FaLinkedin />
-          </a>
-          <a
-            href="https://twitter.com/yourusername"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-white transition"
-          >
-            <FaTwitter />
-          </a>
+          {user?.githubURL && (
+            <a
+              href={user.githubURL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition"
+            >
+              <FaGithub />
+            </a>
+          )}
+          {user?.instagramURL && (
+            <a
+              href={user.instagramURL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition"
+            >
+              <FaInstagram />
+            </a>
+          )}
+          {user?.linkedInURL && (
+            <a
+              href={user.linkedInURL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition"
+            >
+              <FaLinkedin />
+            </a>
+          )}
         </div>
 
         {/* Footer Links */}
@@ -48,8 +71,10 @@ const Footer = () => {
         {/* Copyright */}
         <p className="text-sm text-gray-500 dark:text-gray-400">
           © {new Date().getFullYear()}{" "}
-          <span className="font-semibold text-white">Deepak Kushwaha</span>. All
-          rights reserved.
+          <span className="font-semibold text-white">
+            {user?.fullName || "Your Name"}
+          </span>
+          . All rights reserved.
         </p>
       </div>
     </footer>

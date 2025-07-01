@@ -1,23 +1,26 @@
-// src/store/slices/messageSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+// Async thunk to send contact form message with timeout
 export const sendContactMessage = createAsyncThunk(
   "message/sendContactMessage",
   async ({ name, email, message }, thunkAPI) => {
     try {
-      const { data } = await axios.post(
+      const response = await axios.post(
         "http://localhost:5000/api/v1/message/contact",
+        { name, email, message },
         {
-          name,
-          email,
-          message,
+          timeout: 7000, // optional timeout
+          withCredentials: true, // optional if you're using cookies/auth
         }
       );
-      return data;
+      return response.data.message; // Return message string
     } catch (error) {
+      console.error("Error sending message:", error);
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Failed to send message"
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to send message"
       );
     }
   }
@@ -50,7 +53,7 @@ const messageSlice = createSlice({
       })
       .addCase(sendContactMessage.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || "Something went wrong.";
       });
   },
 });

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 import logo from "@/assets/dk-initials-monogram-concept-logo-design-of-letters-d-and-k-vector.jpg";
 
 const navLinks = [
@@ -14,19 +15,31 @@ const navLinks = [
 
 export default function Header() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleNavClick = (href) => {
     if (href.startsWith("#")) {
-      const element = document.querySelector(href);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "start" });
-        window.history.replaceState(null, "", href);
+      const id = href.slice(1);
+
+      if (location.pathname === "/") {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+          // ✅ Update hash in the URL
+          window.history.pushState(null, "", href);
+        }
+      } else {
+        // Navigate to home with scroll target
+        navigate("/", { state: { scrollTo: id } });
       }
     } else {
-      window.location.href = href;
+      navigate(href);
     }
-    setIsSheetOpen(false); // Close mobile menu if open
+
+    setIsSheetOpen(false);
   };
+  
 
   useEffect(() => {
     const handleResize = () => {
