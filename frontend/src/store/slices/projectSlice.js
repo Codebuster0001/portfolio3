@@ -8,7 +8,7 @@ export const getAllProjects = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const { data } = await axios.get(
-        "https://portfolio-1dkv.onrender.com/api/v1/projects/getall"
+         `${import.meta.env.VITE_API_URL_FRONTEND}/api/v1/projects/getall`
       );
       return data.projects;
     } catch (error) {
@@ -25,7 +25,7 @@ export const getProjectById = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const { data } = await axios.get(
-        `https://portfolio-1dkv.onrender.com/api/v1/projects/${id}`
+         `${import.meta.env.VITE_API_URL_FRONTEND}/api/v1/projects/${id}`
       );
       return data.project;
     } catch (error) {

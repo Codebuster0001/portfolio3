@@ -7,7 +7,7 @@ export const sendContactMessage = createAsyncThunk(
   async ({ name, email, message }, thunkAPI) => {
     try {
       const response = await axios.post(
-        "https://portfolio-1dkv.onrender.com/api/v1/message/contact",
+        `${import.meta.env.VITE_API_URL_FRONTEND}/api/v1/message/contact`,
         { name, email, message },
         {
           timeout: 7000, // optional timeout
