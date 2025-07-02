@@ -148,7 +148,3 @@ You're welcome to **customize, reuse, or extend** it for your own portfolio proj
 
 ---
 
-Let me know if you'd like to add Firebase integration, admin-only access logic, or CI/CD setup!
-```
-
-</rewritten_file>
