@@ -1,16 +1,16 @@
+import { Eye, EyeOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import {
-  resetPassword,
-  clearAllForgotResetPassErrors,
-} from "@/store/slices/forgotResetPasswordSlice";
-import { getUser } from "@/store/slices/userSlice";
-import { Eye, EyeOff } from "lucide-react";
+    clearAllForgotResetPassErrors,
+    resetPassword,
+} from "../store/slices/forgotResetPasswordSlice";
+import { getUser } from "../store/slices/userSlice";
 
 const ResetPassword = () => {
   const { token } = useParams();

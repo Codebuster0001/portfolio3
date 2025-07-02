@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardDescription,
-} from "@/components/ui/card";
-import { toast } from "sonner";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  createTimeline,
-  updateTimeline,
-  clearTimelineErrors,
-  clearTimelineMessages,
-} from "@/store/slices/timelineSlice";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { Button } from "../../components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import {
+    clearTimelineErrors,
+    clearTimelineMessages,
+    createTimeline,
+    updateTimeline,
+} from "../../store/slices/timelineSlice";
 
 const AddTimeline = () => {
   const dispatch = useDispatch();
@@ -77,7 +77,7 @@ const AddTimeline = () => {
           {isEditMode ? "Edit Timeline Entry" : "Create Timeline Entry"}
         </h1>
         <p className="text-muted-foreground italic">
-          “Your time is limited, so don’t waste it living someone else’s life.”
+          “Your time is limited, so don't waste it living someone else's life.”
           – Steve Jobs
         </p>
       </div>

@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axiosInstance from "@/lib/axiosInstance";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axiosInstance from "../../lib/axiosInstance";
 
 // ✅ Forgot Password
 export const forgotPassword = createAsyncThunk(

@@ -1,16 +1,16 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-    addNewProject,
-    getAllProjects,
-    updateProject,
-} from "@/store/slices/projectSlice.js";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Textarea } from "../../components/ui/textarea";
+import {
+    addNewProject,
+    getAllProjects,
+    updateProject,
+} from "../../store/slices/projectSlice.js";
 
 const AddProject = () => {
   const { id } = useParams();

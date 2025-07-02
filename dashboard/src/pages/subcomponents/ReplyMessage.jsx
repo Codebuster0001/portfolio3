@@ -1,7 +1,7 @@
 // src/pages/ReplyMessage.jsx
-import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useParams } from "react-router-dom";
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 
 export default function ReplyMessage() {
   const { id } = useParams();

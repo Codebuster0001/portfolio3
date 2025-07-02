@@ -1,16 +1,11 @@
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  getAllTimelines,
-  deleteTimeline,
-  clearTimelineErrors,
-  clearTimelineMessages,
-} from "@/store/slices/timelineSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Button } from "../components/ui/button";
+import { Card } from "../components/ui/card";
+import { deleteTimeline, getAllTimelines } from "../store/slices/timelineSlice";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -34,13 +29,12 @@ const Timeline = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (error) {
-      toast.error(error);
-      dispatch(clearTimelineErrors());
-    }
+          if (error) {
+        toast.error(error);
+        dispatch(clearTimelineErrors());
+      }
     if (message) {
       toast.success(message);
-      dispatch(clearTimelineMessages());
       dispatch(getAllTimelines());
     }
   }, [dispatch, error, message]);
@@ -68,7 +62,7 @@ const Timeline = () => {
             📜 Manage Timeline
           </h2>
           <p className="text-sm text-muted-foreground italic mt-1">
-            “The future depends on what you do today.” – Mahatma Gandhi
+            "The future depends on what you do today." – Mahatma Gandhi
           </p>
         </div>
         <Button onClick={() => navigate("/dashboard/timeline/addtimeline")}>

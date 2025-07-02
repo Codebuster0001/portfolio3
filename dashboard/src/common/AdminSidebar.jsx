@@ -1,22 +1,22 @@
-import { NavLink, Link } from "react-router-dom";
 import {
-  LayoutDashboard,
-  UserCog,
-  BadgeCheck,
-  FolderGit2,
-  Hourglass,
-  MessageSquare,
-  Menu,
+    BadgeCheck,
+    FolderGit2,
+    Hourglass,
+    LayoutDashboard,
+    Menu,
+    MessageSquare,
+    UserCog,
 } from "lucide-react";
 import { useSelector } from "react-redux";
+import { Link, NavLink } from "react-router-dom";
+import { Button } from "../components/ui/button";
 import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetTitle,
+    SheetTrigger,
+} from "../components/ui/sheet";
 
 const links = [
   { name: "Skills", path: "skill", icon: <BadgeCheck className="w-5 h-5" /> },

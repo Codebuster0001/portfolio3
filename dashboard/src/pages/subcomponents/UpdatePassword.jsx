@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  updatePassword,
-  resetProfile,
-  clearAllUserErrors,
-  clearMessage,
-  logout,
-} from "@/store/slices/userSlice";
 import { Eye, EyeOff } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import {
+    clearAllUserErrors,
+    clearMessage,
+    logout,
+    resetProfile,
+    updatePassword,
+} from "../../store/slices/userSlice";
 
 const UpdatePassword = () => {
   const dispatch = useDispatch();

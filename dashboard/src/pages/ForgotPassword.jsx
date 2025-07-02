@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { clearForgotResetError, forgotPassword } from "@/store/slices/forgotResetPasswordSlice.js";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { clearForgotResetError, forgotPassword } from "../store/slices/forgotResetPasswordSlice.js";
 
-import forgotPasswordGif from "@/assets/Forgotpassword.gif";
+import forgotPasswordGif from "../assets/Forgotpassword.gif";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");

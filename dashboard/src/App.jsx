@@ -1,10 +1,10 @@
-import { useEffect, Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { Toaster } from "sonner";
 
-import { getUser } from "@/store/slices/userSlice";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { getUser } from "./store/slices/userSlice";
 
 // 🔹 Lazy-loaded pages
 const Dashboard = lazy(() => import("@/pages/Dashboard"));

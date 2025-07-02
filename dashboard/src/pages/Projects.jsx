@@ -6,11 +6,11 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { getAllProjects } from "@/store/slices/projectSlice.js";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { getAllProjects } from "../store/slices/projectSlice.js";
 
 // Normalize a string
 const normalize = (str = "") => str.toLowerCase().replace(/[^a-z0-9]/gi, "");

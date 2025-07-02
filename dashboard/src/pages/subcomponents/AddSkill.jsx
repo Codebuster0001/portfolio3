@@ -1,11 +1,11 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addSkill, getAllSkills } from "@/store/slices/skillSlice";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { allIcons, iconNameList } from "@/utils/iconList"; // 👈 icon map and list
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { addSkill, getAllSkills } from "../../store/slices/skillSlice";
+import { allIcons, iconNameList } from "../../utils/iconList"; // �� icon map and list
 
 const AddSkill = () => {
   const dispatch = useDispatch();

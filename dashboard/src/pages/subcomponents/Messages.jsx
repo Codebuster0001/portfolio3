@@ -1,25 +1,25 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
 
 import {
-  clearAllMessageErrors,
-  deleteMessage,
-  getAllMessages,
-  resetMessagesSlice,
-} from "@/store/slices/messageSlice";
+    clearAllMessageErrors,
+    deleteMessage,
+    getAllMessages,
+    resetMessagesSlice,
+} from "../../store/slices/messageSlice";
 
-import { Button } from "@/components/ui/button";
+import { Mail, MessageSquare, UserRoundCheck } from "lucide-react";
+import { Button } from "../../components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { Mail, MessageSquare, Trash2, UserRoundCheck } from "lucide-react";
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "../../components/ui/card";
+import { Tabs, TabsContent } from "../../components/ui/tabs";
 
 const Messages = () => {
   const dispatch = useDispatch();

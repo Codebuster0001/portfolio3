@@ -1,9 +1,8 @@
-import React from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useSelector } from "react-redux";
-import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Textarea } from "../../components/ui/textarea";
 
 const Profile = () => {
   const { user } = useSelector((state) => state.user);

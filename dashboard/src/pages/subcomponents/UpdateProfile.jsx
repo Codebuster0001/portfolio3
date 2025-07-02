@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Textarea } from "../../components/ui/textarea";
 import {
-  clearAllUserErrors,
-  getUser,
-  resetProfile,
-  updateProfile,
-  clearMessage,
-} from "@/store/slices/userSlice";
+    clearAllUserErrors,
+    clearMessage,
+    getUser,
+    resetProfile,
+    updateProfile,
+} from "../../store/slices/userSlice";
 
 const UpdateProfile = () => {
   const dispatch = useDispatch();

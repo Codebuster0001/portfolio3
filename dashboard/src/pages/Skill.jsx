@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getAllSkills, deleteSkill } from "@/store/slices/skillSlice";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
-import { allIcons } from "@/utils/iconList";
+import { useEffect } from "react";
 import { MdDeleteOutline } from "react-icons/md";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { Button } from "../components/ui/button";
+import { deleteSkill, getAllSkills } from "../store/slices/skillSlice";
+import { allIcons } from "../utils/iconList";
 
 const Skills = () => {
   const dispatch = useDispatch();

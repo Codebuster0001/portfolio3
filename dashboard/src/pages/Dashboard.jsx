@@ -17,20 +17,20 @@ import { toast } from "sonner";
 import {
     clearAllMessageErrors,
     getAllMessages,
-} from "@/store/slices/messageSlice";
+} from "../store/slices/messageSlice";
 import {
     clearAllProjectErrors,
     getAllProjects,
-} from "@/store/slices/projectSlice.js";
+} from "../store/slices/projectSlice.js";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "../components/ui/button";
 import {
     Card,
     CardContent,
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
+} from "../components/ui/card";
 import {
     Table,
     TableBody,
@@ -38,7 +38,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
+} from "../components/ui/table";
 
 ChartJS.register(
   LineElement,
