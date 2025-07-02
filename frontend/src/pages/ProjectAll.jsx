@@ -1,25 +1,25 @@
 // ✅ ProjectAll.jsx
-import React, { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getAllProjects } from "@/store/slices/projectSlice";
-import ProjectSearch from "@/components/ProjectSearch";
 import ProjectCard from "@/components/ProjectCard";
+import ProjectSearch from "@/components/ProjectSearch";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-  PaginationLink,
-  PaginationEllipsis,
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
 } from "@/components/ui/pagination";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { getAllProjects } from "@/store/slices/projectSlice.js";
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const ProjectAll = () => {
   const dispatch = useDispatch();

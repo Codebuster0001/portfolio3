@@ -1,16 +1,16 @@
 // ✅ ProjectDetails.jsx (Enhanced Design with High Contrast Text)
-import React, { useEffect, useState, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { getProjectById } from "@/store/slices/projectSlice";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { BoxReveal } from "@/components/magicui/box-reveal";
 import { SparklesText } from "@/components/magicui/sparkles-text";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { getProjectById } from "@/store/slices/projectSlice.js";
 import { motion } from "framer-motion";
-import { useSwipeable } from "react-swipeable";
 import { Globe } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { useSwipeable } from "react-swipeable";
 
 const ProjectDetails = () => {
   const { id } = useParams();

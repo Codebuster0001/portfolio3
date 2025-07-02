@@ -2,10 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  addNewProject,
-  getAllProjects,
-  updateProject,
-} from "@/store/slices/projectSlice";
+    addNewProject,
+    getAllProjects,
+    updateProject,
+} from "@/store/slices/projectSlice.js";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

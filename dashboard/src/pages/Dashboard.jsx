@@ -1,43 +1,43 @@
 // ✅ Dashboard.jsx
 import {
-  Chart as ChartJS,
-  LineElement,
-  PointElement,
-  CategoryScale,
-  LinearScale,
-  Tooltip,
-  Legend,
+    CategoryScale,
+    Chart as ChartJS,
+    Legend,
+    LinearScale,
+    LineElement,
+    PointElement,
+    Tooltip,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
 import { useEffect } from "react";
+import { Line } from "react-chartjs-2";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 import {
-  getAllProjects,
-  clearAllProjectErrors,
-} from "@/store/slices/projectSlice";
-import {
-  getAllMessages,
-  clearAllMessageErrors,
+    clearAllMessageErrors,
+    getAllMessages,
 } from "@/store/slices/messageSlice";
+import {
+    clearAllProjectErrors,
+    getAllProjects,
+} from "@/store/slices/projectSlice.js";
 
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table";
 
 ChartJS.register(

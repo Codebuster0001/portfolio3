@@ -2,11 +2,11 @@
 import { SparklesText } from "@/components/magicui/sparkles-text";
 import ProjectCard from "@/components/ProjectCard";
 import { Button } from "@/components/ui/button";
-import { getAllProjects } from "@/store/slices/projectSlice";
+import { getAllProjects } from "@/store/slices/projectSlice.js";
+import { motion } from "framer-motion";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 
 const Projects = () => {
   const dispatch = useDispatch();
