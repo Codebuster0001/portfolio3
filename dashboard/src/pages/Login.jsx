@@ -12,18 +12,45 @@ import { clearAllUserErrors, login } from "../store/slices/userSlice";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showDebug, setShowDebug] = useState(false);
+  const [apiStatus, setApiStatus] = useState("Unknown");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { loading, isAuthenticated, error } = useSelector((state) => state.user);
 
-  const handleLogin = () => {
-    if (!email || !password) {
-      toast.error("Please provide both email and password!");
-      return;
+  // Test API connection
+  const testApiConnection = async () => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL_DASHBOARD || "http://localhost:5000";
+      const response = await fetch(`${apiUrl}/api/v1/user/me`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        setApiStatus("✅ API is accessible");
+      } else {
+        setApiStatus(`❌ API Error: ${response.status} ${response.statusText}`);
+      }
+    } catch (err) {
+      setApiStatus(`❌ Network Error: ${err.message}`);
     }
-    dispatch(login({ email, password })); // ✅ FIX: Pass as object
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!email || !password) return toast.error("Please fill all fields");
+    
+    // Debug: Log the API URL being used
+    console.log("API URL:", import.meta.env.VITE_API_URL_DASHBOARD || "http://localhost:5000");
+    console.log("Attempting login with:", { email });
+    
+    dispatch(login({ email, password }));
   };
 
   useEffect(() => {
@@ -33,64 +60,84 @@ const Login = () => {
     }
 
     if (isAuthenticated) {
-      navigate("/dashboard", { replace: true });
+      navigate("/dashboard");
     }
-  }, [isAuthenticated, error, dispatch, navigate]);
+  }, [error, isAuthenticated, dispatch, navigate]);
 
   return (
-    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
-      {/* Form Section */}
-      <div className="min-h-screen flex items-center justify-center px-6 py-12">
-        <div className="border border-gray-200 rounded-md p-8 w-full max-w-md">
-          <div className="grid gap-6">
-            <div className="text-center">
-              <h1 className="text-3xl font-bold">Login</h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                Enter your email to log in to your account
-              </p>
-            </div>
+    <div className="grid lg:grid-cols-2 min-h-screen">
+      <div className="flex items-center justify-center px-4">
+        <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6">
+          <h1 className="text-3xl font-bold text-center">Login</h1>
+          <p className="text-muted-foreground text-center text-sm">
+            Enter your credentials to access the dashboard
+          </p>
 
-            <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
+          <div className="space-y-4">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              placeholder="you@example.com"
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
 
-              <div className="grid gap-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-                  <Link to="/password/forgot" className="text-sm underline">
-                    Forgot password?
-                  </Link>
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              placeholder="Enter your password"
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
 
-              <Button onClick={handleLogin} disabled={loading}>
-                {loading ? "Logging in..." : "Login"}
-              </Button>
-            </div>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
+            </Button>
           </div>
-        </div>
+
+          <div className="text-sm text-center space-y-2">
+            <Link to="/password/forgot" className="underline block">
+              Forgot your password?
+            </Link>
+            
+            {/* Debug toggle */}
+            <button
+              type="button"
+              onClick={() => setShowDebug(!showDebug)}
+              className="text-xs text-gray-500 underline"
+            >
+              {showDebug ? "Hide Debug Info" : "Show Debug Info"}
+            </button>
+            
+            {showDebug && (
+              <div className="text-xs text-left bg-gray-100 p-2 rounded mt-2 space-y-1">
+                <p><strong>API URL:</strong> {import.meta.env.VITE_API_URL_DASHBOARD || "http://localhost:5000"}</p>
+                <p><strong>Environment:</strong> {import.meta.env.MODE}</p>
+                <p><strong>Error:</strong> {error || "None"}</p>
+                <p><strong>API Status:</strong> {apiStatus}</p>
+                <button
+                  type="button"
+                  onClick={testApiConnection}
+                  className="text-blue-600 underline"
+                >
+                  Test API Connection
+                </button>
+              </div>
+            )}
+          </div>
+        </form>
       </div>
 
-      {/* Image Section */}
       <div className="hidden lg:flex items-center justify-center bg-muted">
-        <img src={loginGif} alt="Login Illustration" className="w-3/4 h-auto object-cover" />
+        <img
+          src={loginGif}
+          alt="Login Illustration"
+          className="w-3/4 object-cover h-auto"
+        />
       </div>
     </div>
   );
