@@ -146,5 +146,3 @@ cd ../frontend && npm install
 This project is intended for **personal portfolio use**.
 You're welcome to **customize, reuse, or extend** it for your own portfolio projects. Attribution is appreciated but not required.
 
----
-
