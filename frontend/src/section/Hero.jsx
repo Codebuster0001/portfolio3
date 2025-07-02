@@ -30,7 +30,7 @@ const Hero = () => {
   }, []);
   return (
     <section
-      id="/"
+      id="hero"
       className="relative overflow-hidden min-h-screen flex items-center justify-center bg-black text-white px-6 md:px-12"
     >
       {/* Floating Blobs */}
@@ -56,7 +56,7 @@ const Hero = () => {
       <div className="relative z-10 container mx-auto flex flex-col items-center text-center gap-5">
         <BoxReveal>
           <h1 className="text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight text-indigo-400">
-            Hi, I’m
+            Hi, I'm
           </h1>
         </BoxReveal>
 
@@ -66,7 +66,7 @@ const Hero = () => {
 
         <p className="text-gray-300 text-lg sm:text-xl md:text-2xl max-w-2xl">
           I build stunning web experiences using modern JavaScript frameworks.
-          Let’s build something amazing together!
+          Let's build something amazing together!
         </p>
 
         <div className="flex flex-wrap justify-center gap-6">

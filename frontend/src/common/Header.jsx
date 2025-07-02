@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
 import logo from "@/assets/dk-initials-monogram-concept-logo-design-of-letters-d-and-k-vector.jpg";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Menu } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const navLinks = [
-  { name: "Home", href: "/" },
+  { name: "Home", href: "#hero" },
   { name: "About", href: "#about" },
   { name: "Skills", href: "#skills" },
   { name: "Projects", href: "#projects" },
