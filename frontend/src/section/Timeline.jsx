@@ -23,26 +23,30 @@ const lineVariants = {
   },
 };
 
-const getCardVariants = (direction = "left") => ({
-  hidden: {
-    opacity: 0,
-    x: direction === "left" ? -120 : 120,
-    y: 40,
-    filter: "blur(6px)",
-  },
-  visible: {
-    opacity: 1,
-    x: 0,
-    y: 0,
-    filter: "blur(0px)",
-    transition: {
-      duration: 1.3,
-      ease: "easeOut",
-      type: "spring",
-      bounce: 0.3,
+const getCardVariants = (direction = "left") => {
+  // Helper to clamp blur to >= 0
+  const clampBlur = (value) => Math.max(0, value);
+  return {
+    hidden: {
+      opacity: 0,
+      x: direction === "left" ? -120 : 120,
+      y: 40,
+      filter: `blur(${clampBlur(6)}px)`,
     },
-  },
-});
+    visible: {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      filter: `blur(${clampBlur(0)}px)`,
+      transition: {
+        duration: 1.3,
+        ease: "easeOut",
+        type: "spring",
+        bounce: 0.3,
+      },
+    },
+  };
+};
 
 // Timeline Item Component
 const TimelineItem = ({ item, index }) => {
