@@ -12,7 +12,7 @@ const About = () => {
   const getMyProfile = async () => {
     try {
       const { data } = await axios.get(
-        "https://portfolio-1dkv.onrender.com/api/v1/user/portfolio/me",
+        `api/v1/user/portfolio/me`,
         { withCredentials: true }
       );
       setUser(data.user);

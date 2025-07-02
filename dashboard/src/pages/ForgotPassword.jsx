@@ -1,13 +1,12 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useNavigate, Link } from "react-router-dom";
 
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-
-import { clearAllForgotResetPassErrors } from "@/store/slices/forgotResetPasswordSlice";
+import { clearForgotResetError, forgotPassword } from "@/store/slices/forgotResetPasswordSlice.js";
 
 import forgotPasswordGif from "@/assets/Forgotpassword.gif";
 
@@ -22,7 +21,7 @@ const ForgotPassword = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!email) return toast.error("Please enter your email");
-    dispatch(forgotPassword(email)); // Do NOT wrap in object here
+    dispatch(forgotPassword(email));
   };
 
   useEffect(() => {

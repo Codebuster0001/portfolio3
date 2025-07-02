@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axiosInstance";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 // Thunks
 export const getAllProjects = createAsyncThunk(
@@ -153,13 +153,12 @@ const projectSlice = createSlice({
 export const { clearAllErrors, resetProjectSlice } = projectSlice.actions;
 
 // ✅ Exports for Dashboard
- const clearAllProjectErrors = () => (dispatch) => {
-  dispatch(projectSlice.actions.clearAllErrors());
+export const clearAllProjectErrors = () => (dispatch) => {
+  dispatch(clearAllErrors());
 };
 
-
- const resetProjectSlice = () => (dispatch) => {
-  dispatch(projectSlice.actions.resetProjectSlice());
+export const resetProjectSliceAction = () => (dispatch) => {
+  dispatch(resetProjectSlice());
 };
 
 export default projectSlice.reducer;
