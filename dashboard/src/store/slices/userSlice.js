@@ -16,6 +16,9 @@ const initialState = {
 
 export const login = createAsyncThunk("user/login", async ({ email, password }, thunkAPI) => {
   try {
+    // Debug: Log the URL and payload
+    console.log("LOGIN API:", axiosInstance.defaults.baseURL + "/api/v1/user/login");
+    console.log("LOGIN PAYLOAD:", { email, password });
     const { data } = await axiosInstance.post("/api/v1/user/login", { email, password });
     return data.user;
   } catch (error) {
